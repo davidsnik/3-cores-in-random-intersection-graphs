@@ -1,0 +1,86 @@
+\section{Critical behavior and finite-size predictions}
+\label{sec:theoretical-predictions}
+
+\subsection{Configuration-model equations and theorems}
+\label{sec:configuration-theory}
+% Explain edge support, size-biased degree, and the binomial pruning recursion.
+% Specialize the generating-function calculation to twice-Poisson degrees and
+% obtain the core density. Source: notebook 05 and the cited CM theorem.
+% State the theorem's degree assumptions and crossing condition; do not apply
+% its law of large numbers at the critical tangency without further justification.
+% Janson--Luczak (2007) supplies the LLN benchmark; the 2008 critical-fluctuation
+% results need additional hypotheses, checked separately below and in appendix A.
+% Future labels: eq:cm-support, eq:cm-density, thm:cm-core.
+\placeholder{[Support recursion, density formula, and applicable theorem.]}
+
+\subsection{Joint cavity equations for triangles}
+\label{sec:triangle-cavity}
+% Introduce the locally tree-like incidence graph and conditional motif messages.
+% Resolve the two neighbours jointly; independence applies across factor
+% branches, not within a triangle. Define S, M, q_j, and p_j before use.
+% Derive the local cases, compound-Poisson closure, p_0, p_1, p_2, and core density.
+% Separate exact tree calculations from the heuristic prediction for the
+% finite graph's terminal core. Source: notebook 08.
+% Local weak convergence for every fixed depth does not allow an automatic
+% exchange of the large-n and infinite-pruning-depth limits.
+% Relate the calculation to motif-aware literature without importing a theorem
+% or formulas from a different clustered ensemble.
+% Candidate figure: one triangle with two external-support branches.
+% Future labels: eq:triangle-messages, eq:triangle-closure, eq:triangle-density.
+\placeholder{[Message meanings, local rule, closure, and cavity assumptions.]}
+
+\subsection{Discontinuous onset and fold expansion}
+\label{sec:transition-criteria}
+% Explain maximal fixed-point selection through pruning from full support.
+% Establish the criticality/tangency criteria and how to identify a density jump.
+% Introduce scalar parameterizations while retaining their connection to the
+% original message equations. Discuss the persistent zero solution.
+% Distinguish the critical positive branch's right-hand limit from any
+% deterministic finite-size claim at the critical parameter.
+% Introduce a scalar residual G_M(y,lambda), the critical coordinate y_c,
+% G=G_y=0, and nonzero G_lambda, G_yy, and density derivative rho_y.
+% Derive y-y_c ~ sqrt(-2G_lambda/G_yy)*sqrt(lambda-lambda_c) on the maximal branch,
+% then rho_M(lambda)=rho_{c,M}+a_M sqrt(lambda-lambda_{c,M})+O(lambda-lambda_c).
+% Define a_M from derivatives, including the density map, not from a density fit.
+% Existing 08 derives the triangle MESSAGE-coordinate expansion and numerically
+% checks nondegeneracy; the density amplitudes for both models and the analogous
+% CM fold expansion still need a documented derivation and independent checks.
+% Keep the numerically checked triangle single-fold structure distinct from an
+% analytic uniqueness theorem. Solver tolerances belong in methodology.
+% Planned figure/table: physical branches and theory-only critical quantities.
+% Future labels: eq:fold-expansion, eq:density-square-root, tab:critical-predictions.
+\placeholder{[Physical branches, positive jumps, and density amplitudes.]}
+
+\subsection{Critical windows and fluctuation scales}
+\label{sec:fluctuation-scales}
+% Explain the established CM critical-window results under their hypotheses.
+% Verify their specialization to varying lambda_n and random twice-Poisson
+% degrees; distinguish a fixed vector, an iid random vector, and the
+% triangle-conditioned vector. Include the degree-sequence fluctuation term.
+% Introduce u_M=sqrt(n)*(lambda-lambda_{c,M}) and
+% Y_{n,M}=n^(1/4)*(R_{n,M}-rho_{c,M}), always stating conditioning on A_{n,M}.
+% An order n^(-1/2) effective parameter fluctuation combined with the fold
+% motivates order n^(-1/4) density (n^(3/4) count) fluctuations.
+% The deterministic square root proves neither the noise scale nor Gaussianity.
+% Treat these scales as triangle hypotheses. Keep empirical occurrence centres,
+% operational cutoffs, and thermodynamic critical points conceptually separate.
+% Future labels: eq:critical-coordinate, eq:conditional-scaling.
+\placeholder{[CM fluctuation theory and testable triangle scaling hypotheses.]}
+
+\subsection{A stochastic prediction for surviving core sizes}
+\label{sec:stochastic-approximation}
+% Specify the candidate approximation before describing how it will be tested.
+% Introduce Phi, Z~N(0,1), finite-n occurrence centre mu_{n,M}, and width w_{n,M}>0:
+% P(A_{n,M}) ~ Phi((lambda-mu_{n,M})/w_{n,M}).
+% Set V_{n,M}=sqrt(n)*(lambda-mu_{n,M})+sqrt(n)*w_{n,M}*Z.
+% The proposed conditional law is
+% Y_{n,M} | A_{n,M} ~ a_M*sqrt(V_{n,M}) | {V_{n,M}>0}.
+% Theory fixes rho_c, lambda_c, and a_M; only survival indicators calibrate mu,w.
+% Derive predicted conditional means, SDs, quantiles, and CDFs from this law;
+% do not fit a conditional density location, amplitude, or spread.
+% State its nonnegative leading support and how finite-n outcomes below rho_c
+% can challenge it. This is an approximation, not an exact finite-graph law.
+% Report centre drift and occurrence-model fit; do not hide poor fit in a
+% favourable conditional mean. Include calibration uncertainty in predictions.
+% Future labels: eq:occurrence-model, eq:stochastic-fold.
+\placeholder{[Occurrence model and independently testable conditional law.]}

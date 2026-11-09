@@ -40,6 +40,9 @@ make triangle-theory  # Execute triangle cavity definitions in 08
 make triangle-refine  # Execute targeted additional triangle trials in 09
 make triangle-figures # Execute 10 against saved 06 and 09 measurements
 make triangle-study  # Run 09, then 10; existing trial CSVs remain protected
+make report        # Build report/build/main.pdf using selected report figures
+make report-full   # Run comparison, triangle-study, then compile the report
+make report-clean  # Remove generated report build files
 make test          # Run pytest, including fresh-kernel notebook checks
 make smoke         # Run a tiny simulation and analysis with temporary outputs
 make lint          # Ruff lint checks for Python and notebook code
@@ -186,6 +189,43 @@ status. Keep that distinction in explanations and captions. When interpreting
 the transition, inspect individual outcomes and empirical quantiles as well as
 mean curves. A finite-size cutoff or a smoothed slope marker does not determine
 the asymptotic transition type.
+
+## Building and editing the report
+
+The report source is a two-column scientific-paper scaffold in `report/`.
+`main.tex` contains front matter and section order; `preamble.tex` contains shared
+formatting and mathematics. Write each part of the paper in `sections/`, keep
+verified bibliography entries in `references/refs.bib`, and copy selected notebook
+plots into `figures/`. These selected figures are source assets and should be
+committed. The generated `build/` directory is ignored by Git.
+
+The seven-section outline follows the selected finite-size investigation.
+[research_plan.md](research_plan.md) records the question, existing foundation,
+planned controls, and next pilot; it is the source for research decisions.
+
+Install a TeX distribution with `pdflatex`, BibTeX, `latexmk`, and the packages
+used by `report/preamble.tex`. This is separate from `uv` and `make setup`.
+`make report` uses `latexmk` to build `report/build/main.pdf`, including the
+bibliography and repeated passes for references. It does not run notebooks or
+require exploratory results. `make report-clean` removes generated build files.
+
+`make report-full` runs `make comparison`, then `make triangle-study`, then
+`make report`, in that order. It uses the settings saved in notebooks 06–10;
+the defaults include substantial parallel experiments. Trial-file protection
+still applies: choose fresh output directories in 06 and 09, align the analysis
+inputs in 07 and 10, or explicitly enable `overwrite = True` when replacement is
+intended. When measurements already exist, regenerate plots with
+`make comparison-figures` and `make triangle-figures`, select the paper's figures,
+and run `make report`. Figure selection is deliberate rather than an automatic
+copy of every exploratory plot.
+These commands reproduce the baseline studies; they do not implement or run
+the proposed finite-size calibration/validation pilot.
+
+See [report/README.md](../report/README.md) for mathematical environments,
+references, citations, and one- or two-column figures and tables. The report
+currently contains headings, writing prompts, source comments, and a verified
+working bibliography. Replace the temporary `\nocite` list with citations at
+the relevant claims when writing the scientific prose.
 
 ## Modifying the project
 

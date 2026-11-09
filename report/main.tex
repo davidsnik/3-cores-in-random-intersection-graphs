@@ -1,0 +1,49 @@
+% Build from the repository root with: make report
+% Edit the front matter here; write the paper in sections/.
+% Research question, study status, and next pilot: ../docs/research_plan.md.
+% Same conference style and options as the GLA_Software reference project.
+\documentclass[10pt,conference,compsoc]{IEEEtran}
+\input{preamble}
+
+% Replace these placeholders with the title and the single author's details.
+% IEEEtran supplies the title and author formatting.
+\title{[Report title]}
+\author{%
+  \IEEEauthorblockN{[Author name]}
+  \IEEEauthorblockA{[Affiliation]\\
+    {[Email address]}}
+}
+\date{}
+\hypersetup{pdftitle={[Report title]},pdfauthor={[Author name]}}
+
+\begin{document}
+
+% Standard IEEE conference title block and first-column abstract.
+\maketitle
+% Match the compact space below the title in the GLA_Software reference.
+\vspace{-1.5em}
+\begin{abstract}
+  % Write this last: question, methods, principal evidence, and limitations.
+  % Do not promise agreement with the stochastic approximation before testing it.
+  \placeholder{[Abstract text.]}
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/models_and_observables}
+\input{sections/theoretical_predictions}
+\input{sections/numerical_methodology}
+\input{sections/numerical_results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+% Working bibliography for the writing roadmap; these are verified sources.
+% Replace this list with citations at the relevant claims when writing begins.
+\nocite{janson2007kcore,janson2008fluctuations,hofstad2021communities,gleeson2009clustered,bhat2017clustered}
+\bibliographystyle{IEEEtran}
+\bibliography{references/refs}
+
+% Keep essential definitions and assumptions in the main text.
+% These appendices reserve space for supporting details, not new research claims.
+\appendices
+\input{sections/appendices}
+\end{document}

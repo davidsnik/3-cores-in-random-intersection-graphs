@@ -6,6 +6,10 @@ Each notebook combines its mathematical purpose with the relevant implementation
 There is no separate Python package: shared definitions are loaded directly from
 their notebook with IPython's `%run`.
 
+This guide describes the implemented baseline. The agreed finite-size research
+question, planned controls, and proposed notebook extensions are in
+[research_plan.md](research_plan.md).
+
 ## Notebook responsibilities and execution
 
 1. **`01_graphs.ipynb`** defines the `Node` and `Graph` classes, including

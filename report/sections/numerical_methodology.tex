@@ -1,0 +1,84 @@
+\section{Numerical methodology}
+\label{sec:numerical-methodology}
+
+% Current algorithms and baseline measurements already exist; the finite-size
+% design, calibration, and held-out distribution tests below are planned.
+% Keep essential assumptions and validation rules here, not only in appendices.
+
+\subsection{Sampling, pruning, and numerical checks}
+\label{sec:sampling-and-verification}
+% Describe full-vector rejection and shuffled triangle slots, CM stub pairing,
+% and queue-based core peeling with its stopping rule and computational cost.
+% Distinguish simple-neighbour updates from multiplicity-aware CM updates;
+% loops contribute twice to multigraph degree. Reuse pairings for erased controls.
+% Existing 02 constructors accept fixed membership vectors and degree sequences;
+% new work is experiment orchestration and recording, not another core algorithm.
+% Explain scalar reduction, bracketing, maximal-root selection, fold solvers,
+% residuals, tolerances, iteration limits, and checks of density derivatives.
+% Compare the triangle scalar solver with full two-dimensional map iteration.
+% Near-critical slowing or convergence failure is not evidence of an empty core.
+% Include local-rule cases, small-graph pruning checks, independent CM formulas,
+% limiting cases, finite differences, and branch/convergence cross-checks.
+% Sources: 02, 05, 08; simulation patterns in 03/06/09; solver diagnostics in 10.
+% Assign seeds before parallel dispatch; retain vector/matching seeds, settings,
+% code version, and dataset role. UUID labels are not replay parameters.
+% Give concise pseudocode if helpful, rather than notebook/class API listings.
+\placeholder{[Graph algorithms, theory solvers, and reproducibility checks.]}
+
+\subsection{Critical-window design and controls}
+\label{sec:finite-size-design}
+% Separate reused exploratory stages (03/04), common-setting baseline (06/07),
+% and triangle-only refinement (09/10) from new allocation/calibration/validation.
+% Existing 06 model streams do NOT share D; a common trial seed is not degree
+% pairing. Existing 09 records cannot recover full-vector or defect diagnostics.
+% Choose model-specific grids lambda=lambda_{c,M}+u/sqrt(n) for scaling.
+% These generally use DIFFERENT physical lambdas and cannot be same-D pairs.
+% Add a separate common-physical-lambda cohort for true shared-D comparisons;
+% choose overlap with usable survivor counts and retain CM multigraph/erasure.
+% Repeat independent matchings for a subset of full vectors to separate
+% membership and matching variation; preserve vector IDs and actual degree data.
+% Use an independent screening pilot to choose fixed calibration/validation
+% budgets, precision goals, offsets, and a runtime cap; report expected and
+% realised positive counts. Tail samples may be insufficient despite large totals.
+% Predeclare allocation updates. Do not stop after k survivors and use ordinary
+% fixed-sample intervals; adaptive allocation requires appropriate inference.
+% Candidate table: sizes, offsets, physical lambdas, vectors, matching repeats,
+% dataset roles, cutoff rules, and precision targets. Full settings: appendix B.
+% Future label: tab:finite-size-design.
+\placeholder{[Scaled grids, paired controls, and pilot-based sample planning.]}
+
+\subsection{Survival calibration and validation}
+\label{sec:calibration-and-validation}
+% Fit the occurrence model using indicators only, separately by model and size.
+% Keep theory-derived lambda_c, rho_c, and a_M fixed. Do not fit any conditional
+% density offset, amplitude, or spread to improve prediction.
+% Split calibration and validation by complete membership vector, keeping all
+% repeated matchings and paired models together; avoid leakage through shared D.
+% Existing inspected data are exploratory and cannot become unseen validation.
+% Check the occurrence curve itself, parameter uncertainty, centre drift, and
+% sensitivity to the fit range. Separate calibration from allocation screening.
+% Predict conditional CDFs and summaries at held-out observations/parameter points,
+% with uncertainty from the occurrence fit propagated into prediction.
+% Use model controls to diagnose failure instead of recalibrating on target sizes.
+% Planned schematic: theory inputs -> occurrence fit -> held-out size prediction.
+\placeholder{[Indicator-only fitting, data splits, and prediction uncertainty.]}
+
+\subsection{Distributions, uncertainty, and sensitivity}
+\label{sec:distributional-analysis}
+% Define survival probabilities and quantile-based window widths, then assess
+% width versus n^(-1/2), with uncertainty and finite-size corrections.
+% Compare unscaled and n^(1/4)-scaled conditional means, SDs, quantiles, and ECDFs
+% for both models; choose a distribution discrepancy such as Wasserstein distance.
+% Account for fitted occurrence parameters in goodness-of-fit calibration.
+% Binomial/Wilson intervals apply to independent-vector, one-realization batches;
+% repeated-vector designs need vector-cluster uncertainty, preserving model pairs.
+% Bootstrap the full calibration/prediction procedure at the independent unit.
+% Separate graph-to-graph spread from uncertainty of an estimated mean or SD.
+% Predeclare absolute and jump-relative cutoffs. The legacy 5% event is primary;
+% 2% and fractions of rho_c are sensitivity controls, while 8% nearly meets the
+% predicted triangle jump and is a stress test. Flag sparse conditional samples.
+% Keep thermodynamic benchmark error scores tied to their grids and excluded
+% critical band. Onset brackets and smoothed slope markers are descriptive,
+% not confidence intervals for lambda_c; retain only useful secondary diagnostics.
+% Detailed estimation rules and supplementary sensitivity panels: appendix B.
+\placeholder{[Windows, full conditional distributions, and robust uncertainty.]}

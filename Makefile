@@ -1,13 +1,16 @@
 .DEFAULT_GOAL := help
 
 UV ?= uv
+# TeX tools are installed separately from the uv Python environment.
+LATEXMK ?= latexmk
+LATEXMK_FLAGS ?= -pdf -interaction=nonstopmode -halt-on-error -file-line-error -synctex=1
 # Jupyter runs each notebook in a fresh kernel with its own directory as cwd.
 # Without --output or --inplace, it saves no notebook copies or source outputs.
 EXECUTE_NOTEBOOK = $(UV) run --locked jupyter execute
 
 .PHONY: help setup sync run simulate figures theory comparison comparison-simulate \
         comparison-figures triangle-theory triangle-refine triangle-figures \
-        triangle-study smoke test lint format format-check check
+        triangle-study report report-full report-clean smoke test lint format format-check check
 
 help:
 	@printf '%s\n' \
@@ -23,6 +26,9 @@ help:
 	  'make triangle-refine     Save additional triangle trials near the predicted transition' \
 	  'make triangle-figures    Compare both theories with saved comparison/refinement data' \
 	  'make triangle-study     Run targeted refinement, then the final comparison' \
+	  'make report        Build report/build/main.pdf; reuse existing figures' \
+	  'make report-full   Run both research studies and their analyses, then build the PDF' \
+	  'make report-clean  Remove generated report build files' \
 	  'make check         Check formatting, lint, and fresh-kernel notebook tests' \
 	  'make smoke         Check the small simulation/analysis notebook workflow' \
 	  'make format        Format notebook code cells and test code' \
@@ -32,7 +38,9 @@ help:
 	  'For the configuration comparison, edit notebooks/06 and notebooks/07 instead.' \
 	  'The comparison default includes larger runs; use smaller settings for a pilot.' \
 	  'For the triangle cavity study, edit notebooks/09 and notebooks/10.' \
-	  'Only CSV measurements, analysis summaries, and figures are saved under results/.'
+	  'report-full respects notebook settings and existing-measurement guards.' \
+	  'See report/README.md before starting a full research run.' \
+	  'Experiment output is saved under results/; the report PDF is under report/build/.'
 
 setup sync:
 	$(UV) sync --locked
@@ -84,6 +92,24 @@ triangle-figures:
 triangle-study:
 	$(MAKE) triangle-refine
 	$(MAKE) triangle-figures
+
+# -cd resolves TeX inputs from report/; latexmk runs BibTeX and repeats LaTeX
+# as needed for citations and cross-references. This target never runs notebooks.
+report:
+	$(LATEXMK) -cd $(LATEXMK_FLAGS) -outdir=build report/main.tex
+
+# Use the common-condition broad study and the focused triangle study. Keep
+# these steps ordered even with make -j. Existing CSVs remain protected: choose
+# fresh notebook output/data directories or explicitly enable overwrite first.
+# Figures are selected into report/figures/ deliberately when writing begins.
+report-full:
+	$(MAKE) comparison
+	$(MAKE) triangle-study
+	$(MAKE) report
+
+# Remove latexmk-managed products while preserving source and directory markers.
+report-clean:
+	$(LATEXMK) -cd -C -outdir=build report/main.tex
 
 smoke:
 	$(UV) run --locked pytest -q tests/test_notebooks.py::test_simulation_and_analysis_fresh_kernels

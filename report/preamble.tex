@@ -1,0 +1,49 @@
+% Shared mathematical tools and references.
+% IEEEtran controls fonts, margins, headings, title blocks, and captions.
+% Keep its layout consistent with the GLA_Software reference project.
+
+\usepackage{mathtools,amssymb,amsthm}
+\usepackage{bm}
+
+% Figures and tables use the class's native caption formatting.
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+
+% Compact float spacing from the reference project's preamble.
+\setlength{\textfloatsep}{0.5em}
+\setlength{\floatsep}{0.4em}
+\setlength{\intextsep}{0.4em}
+\setlength{\abovecaptionskip}{0.2em}
+\setlength{\belowcaptionskip}{0em}
+\raggedbottom
+
+% Theorem-like statements share one counter within each section.
+% Equations retain the continuous numbering supplied by IEEEtran.
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Add further notation commands only when they are used in the report.
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Core}{Core}
+
+% Writing prompts inherit the surrounding font; grey identifies unfinished text.
+\usepackage{xcolor}
+\definecolor{placeholdergray}{gray}{0.40}
+\newcommand{\placeholder}[1]{{\color{placeholdergray}#1}}
+
+% Numeric IEEE citations and unobtrusive, clickable cross-references.
+% Load hyperref near the end, and cleveref after the theorem definitions.
+\usepackage{cite}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}

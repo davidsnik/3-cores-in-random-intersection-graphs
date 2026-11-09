@@ -2,9 +2,41 @@
 
 This WI4465 Advanced Topics in Probability project studies the 3-core transition
 in random intersection graphs. The root assignment PDF defines the scope.
-Triangle simulation and a configuration-model comparison are implemented. The
-configuration-model theory is derived in notebook 05; triangle cavity equations,
-targeted validation, and the final scientific comparison are in notebooks 08–10.
+The selected direction is finite-size scaling and fluctuations near the
+discontinuous 3-core transition in Poisson triangle-community graphs, using a
+degree-matched configuration model (CM) as the benchmark.
+Baseline simulation and comparison are implemented: CM theory is in notebook 05;
+triangle cavity equations and baseline validation are in notebooks 08–10.
+The additional finite-size investigation is planned, not implemented.
+
+## Agreed research direction
+
+[docs/research_plan.md](docs/research_plan.md) is the canonical research question,
+methodology, completed/planned inventory, and next-pilot roadmap. The connected
+aims are survival-window scaling (test `n^{-1/2}`), conditional density
+fluctuations (test `n^{-1/4}`), and prediction of full conditional distributions
+from theory plus survival-only calibration. The approximation may fail; a
+careful account of its failure is a useful scientific result.
+
+- Derive critical densities and density-fold amplitudes from theory. Fit
+  occurrence parameters only to survival indicators; never fit the target
+  conditional density's location, amplitude, or spread. Split future validation
+  by complete membership vector and propagate calibration uncertainty.
+- Existing 06 uses independent model streams at common settings. Future shared
+  membership-vector controls match CM nominal degrees `2D`, not the triangle
+  projection's actual degrees. Same-vector pairing needs common physical lambda;
+  model-specific critical grids generally use different physical parameters.
+- Repeated matchings sharing a vector are clusters, not independent trials.
+  Plan sufficient positive outcomes, appropriate uncertainty, and absolute as
+  well as jump-relative cutoffs before the new campaign.
+- Distinguish CM theorems, exact local motif calculations, the triangle
+  terminal-core cavity assumption, and finite-size hypotheses. The existing
+  triangle message-coordinate fold is derived; density amplitudes, CM
+  fluctuation-theorem specialization, and held-out tests still need work.
+- The report has seven main sections: motivation; models; critical predictions;
+  numerical methodology; results by question; discussion; conclusion. Preserve
+  the single-author IEEEtran style. Keep this stage a writing roadmap rather
+  than complete scientific prose. See [report/README.md](report/README.md).
 
 ## Start here
 
@@ -30,6 +62,11 @@ targeted validation, and the final scientific comparison are in notebooks 08–1
   trials near the predicted threshold, reusing the graph/simulation algorithms.
 - `notebooks/10_triangle_comparison.ipynb`: saved-data validation of the triangle
   prediction and final comparison of both models, with scientific interpretation.
+- `report/main.tex`: the two-column LaTeX paper scaffold; front matter lives here,
+  with shared formatting in `preamble.tex`, body files in `sections/`, selected
+  figures in `figures/`, and bibliography entries in `references/refs.bib`.
+- [report/README.md](report/README.md): report build and writing conventions.
+- [docs/research_plan.md](docs/research_plan.md): current aims and planned pilot.
 - [docs/architecture.md](docs/architecture.md): data and mathematical conventions.
 - [docs/development.md](docs/development.md): setup, commands, and editor workflow.
 
@@ -50,6 +87,9 @@ make triangle-theory      # Execute the definitions-only triangle theory in 08
 make triangle-refine      # Run additional triangle trials near the prediction
 make triangle-figures     # Analyze saved 06/09 data against both predictions
 make triangle-study       # Execute 09, then 10; existing measurements are protected
+make report               # Build report/build/main.pdf without running notebooks
+make report-full          # Run existing baseline studies, then build the report
+make report-clean         # Remove generated report build files
 ```
 
 ## Changes
@@ -119,3 +159,5 @@ make triangle-study       # Execute 09, then 10; existing measurements are prote
   is a notebook project, with no installable Python package or build target.
 - Update relevant short guides when behavior changes. Preserve the assignment
   PDF. Keep `.venv`, generated results, caches, and builds out of Git.
+- Future finite-size collection/analysis notebooks are proposed in the research
+  plan; they do not exist yet. Existing make targets do not run that future pilot.

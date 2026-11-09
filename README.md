@@ -1,11 +1,19 @@
 # 3-cores in random intersection graphs
 
-WI4465 Advanced Topics in Probability course project: study how clustering
-affects the 3-core phase transition. The assignment is in
+WI4465 Advanced Topics in Probability course project: study finite-size
+fluctuations near the 3-core transition in Poisson triangle-community graphs,
+with a degree-matched configuration model as a benchmark. The assignment is in
 `3-core-random-intersection-graphs.pdf`. The notebooks study the triangle model
 and compare it with a configuration model. Both models have a mathematical
 prediction and numerical validation; the triangle calculation retains the
 dependence between neighbours in the same triangle.
+
+The next phase connects survival-window scaling, conditional size fluctuations,
+and a stochastic saddle-node prediction calibrated from survival indicators.
+The prediction is a hypothesis to test. The existing notebooks provide the
+baseline; the new controlled pilot and independent distributional validation
+are still planned. See [the research plan](docs/research_plan.md) for the exact
+research question, evidence distinctions, and concrete next steps.
 
 ## Start here
 
@@ -213,6 +221,29 @@ excluding points within `0.025` of its predicted threshold. These are measured
 finite-size errors from the saved default run, rather than an established
 convergence rate. Notebook 10 examines the critical region separately.
 
+## LaTeX report
+
+The two-column paper template lives in `report/`, with title, author, affiliation,
+abstract, and section placeholders. Its mathematical environments, bibliography,
+figures, tables, and cross-references are configured; report content has not yet
+been written. Its seven-section outline follows the finite-size research
+questions and includes detailed writing notes. Install a TeX distribution and
+`latexmk` separately from `uv`, then
+run:
+
+```bash
+make report        # Build report/build/main.pdf without running experiments
+make report-full   # Run comparison and triangle studies, then build the PDF
+make report-clean  # Remove generated report build files
+```
+
+`report-full` respects the notebook settings and existing-measurement guards.
+It runs the existing baseline studies, not the proposed finite-size pilot.
+Choose fresh, aligned output/input directories or explicitly enable replacement
+before rerunning saved experiments. Select report plots into `report/figures/`
+deliberately; the PDF build uses those files. See
+[report/README.md](report/README.md) for the structure and writing conventions.
+
 See [development.md](docs/development.md) for setup and modification commands,
 [architecture.md](docs/architecture.md) for graph and probability conventions,
-and [report/README.md](report/README.md) for the future report layout.
+and [report/README.md](report/README.md) for the report template.
