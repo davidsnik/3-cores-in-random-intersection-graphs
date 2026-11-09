@@ -29,9 +29,9 @@ To activate it in one terminal, use `source .venv/bin/activate`; leave it with
 ## Commands and configuration
 
 ```bash
-make run           # Execute 03 to save measurements, then 04 to save the figure
-make simulate      # Execute 03 and replace the configured CSV
-make figures       # Execute 04 against an existing CSV; no simulation
+make run           # Run the selected stage in 03, then analyze its data in 04
+make simulate      # Execute 03 and save the selected stage's CSVs
+make figures       # Execute 04 against a saved stage; no simulation
 make test          # Run pytest, including fresh-kernel notebook checks
 make smoke         # Run a tiny simulation and analysis with temporary outputs
 make lint          # Ruff lint checks for Python and notebook code
@@ -47,35 +47,56 @@ outputs created during interactive work before committing. Notebook path setup
 supports kernels started in `notebooks/` or the repository root; sibling `%run`
 calls work in either case.
 
-Edit the commented `config` dictionary in the **Experiment settings** cell of
-`notebooks/03_triangle_simulation.ipynb`. For example, set `"n": 5000`,
-`"repeats": 50`, and `"jobs": 4`, then run `make run`. The lambda grid includes
-its endpoints. Set `data_file`, `figure_file`, and `smoothing_window` in the
-settings cell of `notebooks/04_triangle_analysis.ipynb`. The smoothing window
-must be positive and odd. Paths are relative to the repository root. In the
-editor, restart and run the relevant notebook from top to bottom after changing
-settings; in the terminal, Make reads the saved notebook cells.
+Edit the commented `config` dictionary in the **Study settings** cell of
+`notebooks/03_triangle_simulation.ipynb`. Its `experiments` dictionary contains
+settings for three stages:
 
-Simulation replaces the selected CSV. To retain another run, choose distinct
-`data_file` and `figure_file` paths. Figure generation reuses an existing CSV even
-if simulation settings changed: rerun the simulation explicitly to measure new
-settings. If the CSV does not exist, run `make simulate` before `make figures`.
-When choosing another CSV path, update `data_file` in both notebooks. The figure
-file extension selects a format such as PNG or PDF. There is no separate settings
-file or environment-variable configuration.
+1. Run `"stage": "pilot"` to explore the range and measure runtime.
+2. Select `"comparison"` to compare increasing graph sizes on a common grid.
+3. Set the bounds for `"refinement"` from those results, then select that stage
+   to collect more trials on a finer grid near the transition.
+
+Inside a stage, `sizes` lists graph sizes; `lambda_min`, `lambda_max`, and
+`lambda_count` define a grid including both endpoints; `repeats` sets independent
+trials at each point. The shared `jobs` setting controls parallel trials: use
+`1` for sequential execution, a positive number for that many workers, or `-1`
+for all available CPUs. Start with the pilot and use its timing information to
+decide whether the proposed larger runs are practical on your machine.
+
+Select the same `stage` in notebook 04 and set its `data_dir` to match notebook
+03's `output_dir`. Its `figure_dir` receives comparison, close-up, and histogram
+PNGs plus summary and transition-estimate CSVs. `smoothing_window` controls the
+main slope marker; `sensitivity_windows` compares several choices. Windows must
+be positive and odd. `zoom_width`, `histogram_n`, and `histogram_lambdas` control
+which outcomes are shown more closely; the notebook explains their defaults.
+
+Simulation checks every selected file before doing work and refuses to replace
+existing measurements. To intentionally repeat a stage, set `overwrite` to
+`True`; to keep another study, choose a different `output_dir` and update
+analysis to match. Analysis may regenerate its figures and summary tables without
+changing trial CSVs. It uses saved data even if simulation settings have changed;
+missing data is an error directing you to run the selected stage first.
+
+Paths are relative to the repository root. In the editor, restart and run the
+relevant notebook from top to bottom after changing settings; in the terminal,
+Make reads the saved notebook cells. There is no separate settings file or
+environment-variable configuration.
 
 ## Modifying the project
 
 - Change the graph representation, edge operations, or copying in
   `notebooks/01_graphs.ipynb`. Keep cached degrees, neighbour sets, and edge sets
-  consistent.
+  consistent. Invalid operations must raise an error without leaving partial
+  changes. Edge edits through either a node or its graph must update all three
+  representations of the connection.
 - Change core peeling and community matching in `notebooks/02_algorithms.ipynb`.
   `construct_special_triangle_RIG` is the Poisson/triangle wrapper;
   `construct_random_intersection_graph` accepts other membership samplers and
   fixed community sizes.
-- Change trial measurements, seed assignment, parameter sweeps, or CSV output in
-  `notebooks/03_triangle_simulation.ipynb`. Assign seeds before dispatch and retain individual
-  replay seeds in saved rows.
+- Change trial measurements, seed assignment, study stages, or CSV output in
+  `notebooks/03_triangle_simulation.ipynb`. Assign seeds before dispatch and
+  retain individual replay seeds in saved rows. Keep stages and graph sizes on
+  separate streams, and protect saved measurements unless replacement is explicit.
 - Change summaries, smoothing, or figure styles in
   `notebooks/04_triangle_analysis.ipynb`.
   Analyze saved measurements without loading or generating graphs.

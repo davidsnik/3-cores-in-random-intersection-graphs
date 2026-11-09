@@ -32,19 +32,31 @@ def notebook_project(tmp_path):
     # mathematical implementations are exactly those used for research runs.
     settings = {
         NOTEBOOKS[2]: {
-            "n": 60,
-            "repeats": 2,
-            "lambda_min": 0.7,
-            "lambda_max": 2.5,
-            "lambda_count": 5,
+            "stage": "pilot",
             "seed": 2026,
             "jobs": 2,
-            "data_file": "results/runs/trials.csv",
+            "output_dir": "results/runs/triangle_study",
+            "overwrite": False,
+            "experiments": {
+                stage: {
+                    "sizes": [30, 60],
+                    "lambda_min": 0.0,
+                    "lambda_max": 3.0,
+                    "lambda_count": 5,
+                    "repeats": 2,
+                }
+                for stage in ("pilot", "comparison", "refinement")
+            },
         },
         NOTEBOOKS[3]: {
-            "data_file": "results/runs/trials.csv",
-            "figure_file": "results/figures/transition.png",
+            "data_dir": "results/runs/triangle_study",
+            "stage": "pilot",
+            "figure_dir": "results/figures/triangle_study",
             "smoothing_window": 3,
+            "sensitivity_windows": [1, 3, 7],
+            "zoom_width": 0.5,
+            "histogram_n": None,
+            "histogram_lambdas": None,
         },
     }
     for name, config in settings.items():
@@ -90,7 +102,7 @@ def execute_notebook(project, name, assertions="", *, from_root=False):
     return notebook
 
 
-def test_original_graph_classes(notebook_project):
+def test_graph_operations_and_errors(notebook_project):
     execute_notebook(
         notebook_project,
         NOTEBOOKS[0],
@@ -98,14 +110,33 @@ def test_original_graph_classes(notebook_project):
 import copy
 from itertools import combinations
 from uuid import UUID
+import pytest
 
 left, right = Node(), Node()
 assert isinstance(left.id, UUID)
 left.join(right)
 assert left.degree == right.degree == 1
 assert left in right.neighbours and right in left.neighbours
+for operation, error in [
+    (lambda: left.join(right), ValueError),
+    (lambda: left.join(left), ValueError),
+    (lambda: left.join("not a node"), TypeError),
+]:
+    with pytest.raises(error):
+        operation()
+    assert left.degree == right.degree == 1
+    assert left.neighbours == {right} and right.neighbours == {left}
 left.unjoin(right)
 assert left.degree == right.degree == 0
+with pytest.raises(ValueError):
+    left.unjoin(right)
+with pytest.raises(TypeError):
+    left.unjoin(None)
+assert not left.neighbours and not right.neighbours
+
+for invalid_size in [-1, 1.5, True]:
+    with pytest.raises(ValueError):
+        Graph(invalid_size)
 
 graph = Graph(4)
 nodes = list(graph.nodes)
@@ -120,6 +151,77 @@ assert all(next(node for node in copied.nodes if node.id == original.id) is not 
 copied.remove_node(next(iter(copied.nodes)))
 assert len(copied.nodes) == 3 and len(copied.edges) == 3
 assert len(graph.nodes) == 4 and len(graph.edges) == 6
+
+def state(graph):
+    return (set(graph.nodes), set(graph.edges),
+            {node: (node.degree, frozenset(node.neighbours)) for node in graph.nodes})
+
+left, right = nodes[:2]
+foreign = Node()
+copied_left = next(node for node in copy.deepcopy(graph).nodes if node.id == left.id)
+before = state(graph)
+for operation, error in [
+    (lambda: graph.add_node(left), ValueError),
+    (lambda: graph.add_node(None), TypeError),
+    (lambda: graph.add_edge(left, left), ValueError),
+    (lambda: graph.add_edge(left, right), ValueError),
+    (lambda: graph.add_edge(left, foreign), ValueError),
+    (lambda: graph.add_edge(left, "not a node"), TypeError),
+    (lambda: graph.remove_edge(left, foreign), ValueError),
+    (lambda: graph.remove_node(foreign), ValueError),
+    (lambda: graph.remove_node(None), TypeError),
+    (lambda: graph.remove_node(copied_left), ValueError),
+]:
+    with pytest.raises(error):
+        operation()
+    assert state(graph) == before
+
+graph.remove_edge(left, right)
+before = state(graph)
+with pytest.raises(ValueError):
+    graph.remove_edge(left, right)
+assert state(graph) == before
+
+standalone = Node()
+standalone.join(foreign)
+with pytest.raises(ValueError):
+    graph.add_node(standalone)
+assert standalone not in graph.nodes and state(graph) == before
+
+# Node and Graph operations can be mixed: both keep the owning graph's edge
+# set synchronized with its vertices' neighbours and cached degrees.
+owned = Graph(2)
+left, right = tuple(owned.nodes)
+edge = frozenset((left, right))
+left.join(right)
+assert owned.edges == {edge} and left.degree == right.degree == 1
+owned.remove_edge(left, right)
+assert not owned.edges and left.degree == right.degree == 0
+owned.add_edge(left, right)
+left.unjoin(right)
+assert not owned.edges and not left.neighbours and not right.neighbours
+before = state(owned)
+for operation in [lambda: left.unjoin(right), lambda: owned.remove_edge(left, right)]:
+    with pytest.raises(ValueError):
+        operation()
+    assert state(owned) == before
+
+# Removing a node releases it, so an isolated vertex can be added again or
+# moved to another graph. It must never belong to both graphs at once.
+owned.remove_node(left)
+owned.add_node(left)
+assert left in owned.nodes
+owned.remove_node(left)
+other = Graph(1)
+other.add_node(left)
+neighbour = next(node for node in other.nodes if node is not left)
+left.join(neighbour)
+assert other.edges == {frozenset((left, neighbour))}
+with pytest.raises(ValueError):
+    owned.add_node(left)
+with pytest.raises(ValueError):
+    left.join(right)
+assert left not in owned.nodes and other.edges == {frozenset((left, neighbour))}
 """,
     )
 
@@ -127,7 +229,7 @@ assert len(graph.nodes) == 4 and len(graph.edges) == 6
 @pytest.mark.parametrize(
     "from_root", [False, True], ids=["notebook-cwd", "project-cwd"]
 )
-def test_original_algorithms(notebook_project, from_root):
+def test_core_and_community_algorithms(notebook_project, from_root):
     execute_notebook(
         notebook_project,
         NOTEBOOKS[1],
@@ -178,41 +280,99 @@ def test_simulation_and_analysis_fresh_kernels(notebook_project):
         notebook_project,
         NOTEBOOKS[2],
         """
+import pytest
+
 serial = simulate_triangle(30, [0.0, 1.5, 2.0], 2, seed=19, jobs=1)
 parallel = simulate_triangle(30, [0.0, 1.5, 2.0], 2, seed=19, jobs=2)
 assert serial == parallel
 assert len({row["seed"] for row in serial}) == 6
 for row in serial:
     assert triangle_trial(row["n"], row["lambda"], row["replicate"], row["seed"]) == row
+
+# Try each study stage with tiny parameters, rather than running research sizes.
+for stage in ["comparison", "refinement"]:
+    stage_config = config | {"stage": stage, "jobs": 1}
+    paths = run_triangle_study(stage_config, project_root=PROJECT_ROOT)
+    assert len(paths) == 2 and all(path.exists() for path in paths)
+
+with pytest.raises(FileExistsError):
+    run_triangle_study(config, project_root=PROJECT_ROOT)
+
+# A later existing target must stop the whole request before an earlier new
+# size is simulated and written. This avoids accidentally starting half a rerun.
+guarded = config | {"experiments": config["experiments"] | {
+    "pilot": config["experiments"]["pilot"] | {"sizes": [15, 30]}
+}}
+with pytest.raises(FileExistsError):
+    run_triangle_study(guarded, project_root=PROJECT_ROOT)
+assert not (PROJECT_ROOT / config["output_dir"] / "pilot_n15.csv").exists()
 """,
     )
-    data_file = notebook_project / "results/runs/trials.csv"
-    with data_file.open(newline="", encoding="utf-8") as stream:
-        rows = list(csv.DictReader(stream))
-    assert len(rows) == 10
-    assert {row["n"] for row in rows} == {"60"}
-    before = data_file.read_bytes(), data_file.stat().st_mtime_ns
+    data_dir = notebook_project / "results/runs/triangle_study"
+    data_files = sorted(data_dir.glob("*.csv"))
+    assert len(data_files) == 6
+    all_seeds = []
+    for data_file in data_files:
+        with data_file.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        assert len(rows) == 10
+        assert {row["n"] for row in rows} == {data_file.stem.split("_n")[1]}
+        assert {row["model"] for row in rows} == {"triangle_rig"}
+        assert len({(row["lambda"], row["replicate"]) for row in rows}) == 10
+        assert all(
+            float(row["core_fraction"]) == int(row["core_size"]) / int(row["n"])
+            for row in rows
+        )
+        assert all(
+            int(row["core_size"]) == 0 for row in rows if float(row["lambda"]) == 0
+        )
+        all_seeds.extend(row["seed"] for row in rows)
+    assert len(set(all_seeds)) == len(all_seeds)
+    before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in data_files}
     result = execute_notebook(
         notebook_project,
         NOTEBOOKS[3],
         """
+import pytest
+
 assert estimate_transition([0, 1], [0, 1]) is None
 assert estimate_transition([0, 1, 2], [0.1, 0.1, 0.1]) is None
 sample = [{"n": 10, "lambda": lam, "core_fraction": fraction}
           for lam, fraction in [(2, .6), (0, 0), (1, .2), (2, 1), (0, .2), (1, .6)]]
-figure, estimate = plot_results(sample, smoothing_window=1)
-lines = {line.get_label(): line for line in figure.axes[0].lines}
-np.testing.assert_allclose(lines["Mean"].get_ydata(), [.1, .4, .8])
-np.testing.assert_allclose(lines["Median"].get_ydata(), [.1, .4, .8])
-assert estimate == 1.0
+sample += [{"n": 20, "lambda": 0, "core_fraction": .9}]
+grouped = summarize_results(sample)
+small = [row for row in grouped if row["n"] == 10]
+np.testing.assert_allclose([row["mean"] for row in small], [.1, .4, .8])
+np.testing.assert_allclose([row["median"] for row in small], [.1, .4, .8])
+np.testing.assert_allclose([row["standard_error"] for row in small], [.1, .2, .2])
+assert all(row["trials"] == 2 for row in small)
+assert next(row for row in grouped if row["n"] == 20)["standard_error"] is None
+assert estimate_transition([0, 1, 2], [.1, .4, .8], window=1) == 1.0
+
+distribution = plot_distributions(sample, n=10, lambdas=[0, 1, 2], smoothing_window=1)
+assert len(distribution.axes) == 3
+assert all(sum(patch.get_height() for patch in axis.patches) == 2
+           for axis in distribution.axes)
+with pytest.raises(FileNotFoundError):
+    load_study(PROJECT_ROOT / "missing_measurements", "pilot")
 """,
     )
-    assert (data_file.read_bytes(), data_file.stat().st_mtime_ns) == before
-    assert (
-        (notebook_project / "results/figures/transition.png")
-        .read_bytes()
-        .startswith(b"\x89PNG\r\n\x1a\n")
-    )
+    assert {
+        path: (path.read_bytes(), path.stat().st_mtime_ns) for path in data_files
+    } == before
+    figure_dir = notebook_project / "results/figures/triangle_study"
+    for kind in ("comparison", "zoom", "distributions"):
+        assert (
+            (figure_dir / f"pilot_{kind}.png")
+            .read_bytes()
+            .startswith(b"\x89PNG\r\n\x1a\n")
+        )
+    for name in ("summary", "transition_estimates"):
+        with (figure_dir / f"pilot_{name}.csv").open(
+            newline="", encoding="utf-8"
+        ) as stream:
+            rows = list(csv.DictReader(stream))
+        assert {row["n"] for row in rows} == {"30", "60"}
     assert any(
         "image/png" in output.get("data", {})
         for cell in result.cells

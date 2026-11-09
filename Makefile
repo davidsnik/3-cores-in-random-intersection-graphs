@@ -11,14 +11,15 @@ help:
 	@printf '%s\n' \
 	  'make setup         Synchronize the uv environment (alias: make sync)' \
 	  'make run           Execute simulation, then analysis notebooks' \
-	  'make simulate      Run 03_triangle_simulation.ipynb and replace its CSV' \
-	  'make figures       Plot existing CSV with 04_triangle_analysis.ipynb' \
+	  'make simulate      Run the selected triangle-study stage and save its CSVs' \
+	  'make figures       Plot saved measurements for the selected study stage' \
 	  'make check         Check formatting, lint, and fresh-kernel notebook tests' \
 	  'make smoke         Check the small simulation/analysis notebook workflow' \
 	  'make format        Format notebook code cells and test code' \
 	  '' \
 	  'Edit the settings cells in notebooks/03 and notebooks/04 before running.' \
-	  'Only CSV measurements and figures are saved under results/.'
+	  'Select the same study stage in both notebooks; existing trials are protected.' \
+	  'Only CSV measurements, analysis summaries, and figures are saved under results/.'
 
 setup sync:
 	$(UV) sync --locked
@@ -31,7 +32,7 @@ run:
 simulate:
 	$(EXECUTE_NOTEBOOK) notebooks/03_triangle_simulation.ipynb --timeout=-1
 
-# Analysis reads its CSV from its own settings cell; missing data gives a message
+# Analysis selects saved CSVs from its own settings cell; missing data gives a message
 # directing the developer to run make simulate. Plotting never launches a sweep.
 figures:
 	$(EXECUTE_NOTEBOOK) notebooks/04_triangle_analysis.ipynb --timeout=-1

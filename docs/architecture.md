@@ -12,11 +12,12 @@ their notebook with IPython's `%run`.
    joining/unjoining nodes, adding/removing edges, and graph copying.
 2. **`02_algorithms.ipynb`** loads 01 and defines `construct_k_core`,
    `construct_random_intersection_graph`, and `construct_special_triangle_RIG`.
-3. **`03_triangle_simulation.ipynb`** loads 02, defines its experiment settings,
-   assigns trial seeds, runs the sweep, and saves one CSV row per realization.
-4. **`04_triangle_analysis.ipynb`** reads those saved rows, computes summaries,
-   estimates a slope marker, and saves the figure. It does not load graph classes
-   or rerun simulations.
+3. **`03_triangle_simulation.ipynb`** loads 02, defines pilot, size-comparison, and
+   transition-refinement settings, assigns trial seeds, runs the selected stage,
+   and saves one CSV per graph size with one row per realization.
+4. **`04_triangle_analysis.ipynb`** reads a saved stage, compares graph sizes,
+   examines variation near the transition, and saves figures and summary tables.
+   It does not load graph classes or rerun simulations.
 
 The first two notebooks contain imports and definitions only: `%run` makes their
 classes and functions available in the calling notebook without starting an
@@ -27,12 +28,22 @@ resolve consistently. Run Makefile commands from the repository root. They
 execute the same notebooks without saving executed copies or modifying sources.
 
 Each experiment notebook has an editable, commented `config` dictionary in a
-cell tagged `parameters`. Notebook 03 configures graph size, the lambda grid,
-repeats, seed, workers, and the CSV path. Notebook 04 configures its CSV input,
-figure output, and smoothing. Keep `data_file` aligned between these notebooks;
-both default to `results/runs/triangle_transition.csv`. All output paths are
-relative to the repository root. Analysis requires an existing CSV; it never
-starts a simulation to create one.
+cell tagged `parameters`. Notebook 03 selects a `stage` and configures its graph
+sizes, lambda grid, repeats, master seed, workers, and `output_dir`. Notebook 04
+selects a saved `stage` from `data_dir` and configures figure output, smoothing,
+and which outcomes to inspect more closely. The default data directory is
+`results/runs/triangle_study/`; keep the directories and selected stages aligned.
+All output paths are relative to the repository root. Analysis requires saved
+data; it never starts a simulation to create it.
+
+The stages provide a simple progression: explore the broad range with `pilot`,
+compare several increasing sizes with `comparison`, then choose tighter bounds
+for `refinement` after looking at the saved results. The default runs only the
+pilot. The larger stages are explicit choices and may take substantially longer.
+Each stage/size saves a separate file, such as `comparison_n3000.csv`. Before
+computing, the simulation checks every selected output path and refuses to
+replace existing files unless `overwrite` is enabled. Use another output
+directory to retain another version of a study.
 
 ## Graph representation and copying
 
@@ -46,6 +57,15 @@ set, neighbour sets, and cached degrees remain consistent. The graph implements
 deep copying by creating new node objects with the same UUIDs, then rebuilding
 edges between those copies. Copies are independent graphs while corresponding
 vertices retain their identities.
+
+Improper use raises an exception before the operation changes the graph.
+Examples include adding an edge twice, joining a node to itself, removing a node
+that is absent, or passing something other than a `Node`. A node belongs to at
+most one graph. A copied node has the same UUID as its counterpart, but cannot
+be used to edit the other graph. `Node.join` and `Node.unjoin` also update the
+owning graph's edge set when both vertices belong to that graph. Standalone
+nodes can be joined to each other, but connections across different graphs are
+rejected.
 
 `construct_k_core(graph, k)` deep-copies the graph and peels vertices whose degree
 is below `k`. It returns a `Graph` containing the survivors; the input graph is
@@ -86,17 +106,29 @@ and reproduces its 3-core measurement, rather than its UUID values.
 Each measurement dictionary and CSV row contains
 `model, n, lambda, replicate, seed, core_size, core_fraction`. Trial seeds are
 assigned before optional parallel execution, so worker count does not change
-measurements. Changing grid order or repeat count can change which seed is
-assigned to a parameter/replicate pair. Record the configuration with any research
-results you retain.
+measurements. Study stages and graph sizes have separate seed streams. The
+parallel work consists of independent trials, with no nested parallel loops.
+Changing grid order or repeat count can change which seed is assigned to a
+parameter/replicate pair. Record the configuration and code version with any
+research results you retain; each saved row also contains its replay seed.
 
-Analysis groups one graph size by lambda and plots means, medians, full ranges,
-and interquartile ranges. Bands show variation between realizations; they are
-not confidence intervals for the mean. The maximum-slope marker uses a smoothed
-mean and is an exploratory finite-size heuristic. It depends on graph size,
-parameter grid, and smoothing, and is separate from future theoretical
-predictions.
+Analysis groups measurements by graph size and lambda. The comparison figure
+shows how mean core fractions and variation change with size. A closer plot
+focuses on the estimated transition, and histograms show whether averages hide a
+mixture of individual graphs with small and substantial cores. These describe
+variation between graphs. The summary table also reports the standard error of
+each mean, estimated from independent trials; it is unavailable for a single
+trial.
+
+The maximum-slope marker uses a smoothed mean and is an exploratory finite-size
+heuristic. A second table compares several smoothing windows and both the
+available grid and a coarser subset. It records when too few points or a flat
+curve make the marker unavailable. The marker depends on graph size, grid, and
+smoothing; it does not establish a theoretical critical value or decide the
+order of the transition. Use the plots and their trial variability to explain
+what the finite-size evidence suggests and what remains uncertain.
 
 Generated CSVs live under `results/runs/` and exploratory figures under
-`results/figures/`; both are ignored by Git. Selected report figures and future
+`results/figures/`, alongside analysis summary CSVs; both are ignored by Git.
+Selected report figures and future
 LaTeX source belong in `report/`.

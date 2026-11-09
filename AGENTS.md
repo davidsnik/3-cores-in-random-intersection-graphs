@@ -10,8 +10,9 @@ equations remain future work.
 - `notebooks/01_graphs.ipynb`: `Node` and `Graph` classes for vertices and undirected graphs.
 - `notebooks/02_algorithms.ipynb`: `construct_k_core`,
   `construct_random_intersection_graph`, and `construct_special_triangle_RIG`.
-- `notebooks/03_triangle_simulation.ipynb`: seeded trials, sweeps, and CSV output;
-  edit its `config` dictionary to choose simulation settings.
+- `notebooks/03_triangle_simulation.ipynb`: seeded, parallel pilot, size-comparison,
+  and transition-refinement experiments; edit its `config` dictionary to choose
+  the stage and simulation settings.
 - `notebooks/04_triangle_analysis.ipynb`: independent saved-data analysis and
   figures; edit its `config` dictionary to choose input, output, and smoothing.
 - [docs/architecture.md](docs/architecture.md): data and mathematical conventions.
@@ -24,8 +25,8 @@ make setup     # Synchronize .venv from uv.lock (alias: make sync)
 make check     # Ruff checks and tests, including fresh-kernel notebook execution
 make smoke     # Tiny simulation and analysis with temporary outputs
 make run       # Execute simulation, then analysis
-make simulate  # Rerun the configured sweep and replace its CSV
-make figures   # Replot an existing CSV; run make simulate first if it is missing
+make simulate  # Run the selected stage; protect existing CSVs unless overwrite is enabled
+make figures   # Analyze a saved stage; run make simulate first if data is missing
 ```
 
 ## Changes
@@ -46,8 +47,11 @@ make figures   # Replot an existing CSV; run make simulate first if it is missin
   source outputs. Notebook path setup supports kernels started in `notebooks/`
   or the repository root; output paths are relative to the repository root.
 - Keep experiment settings in the relevant notebook's commented `config`
-  dictionary, in its cell tagged `parameters`. Keep the simulation and analysis
-  `data_file` settings aligned. Analysis must report missing data rather than
+  dictionary, in its cell tagged `parameters`. Keep the simulation `output_dir`
+  and analysis `data_dir` aligned, and select the same `stage`. Keep the default
+  stage a manageable pilot; refinement bounds must be chosen from observed data.
+  Protect existing measurements unless `overwrite` is explicitly enabled.
+  Analysis must report missing data rather than
   starting a simulation implicitly.
 - Pass explicit NumPy generators and assign trial seeds before parallel dispatch.
   Seeds reproduce membership sampling, matching, and measurements; UUID labels
@@ -56,6 +60,9 @@ make figures   # Replot an existing CSV; run make simulate first if it is missin
   their copies as a record of how they were generated. Preserve full-vector
   divisibility conditioning and simple-graph projection. Core construction must
   leave its input unchanged. Distinguish measurements, heuristics, and theory.
+- Invalid graph operations must raise informative errors before changing state;
+  do not print a message and continue. Keep edge sets, neighbour sets, cached
+  degrees, and graph ownership consistent.
 - Add meaningful small tests for changed behavior; run `make check`. Tests load
   notebook implementations in fresh kernels. Workflow tests use tiny settings
   and temporary outputs, leaving research measurements untouched.
