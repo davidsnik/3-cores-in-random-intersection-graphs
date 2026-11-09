@@ -8,7 +8,7 @@ their notebook with IPython's `%run`.
 
 ## Notebook responsibilities and execution
 
-1. **`01_graphs.ipynb`** defines the original `Node` and `Graph` classes, including
+1. **`01_graphs.ipynb`** defines the `Node` and `Graph` classes, including
    joining/unjoining nodes, adding/removing edges, and graph copying.
 2. **`02_algorithms.ipynb`** loads 01 and defines `construct_k_core`,
    `construct_random_intersection_graph`, and `construct_special_triangle_RIG`.
@@ -50,14 +50,15 @@ vertices retain their identities.
 `construct_k_core(graph, k)` deep-copies the graph and peels vertices whose degree
 is below `k`. It returns a `Graph` containing the survivors; the input graph is
 unchanged. A neighbour enters the queue when losing an edge takes it below the
-threshold. The 3-core fraction is `len(core.nodes) / n`, using the original graph
+threshold. The 3-core fraction is `len(core.nodes) / n`, using the input graph
 size, including isolated vertices.
 
 Generated graphs also retain the sampled membership counts, indexed by UUID, and
-community tuples containing the original UUID slots. These describe graph
+community tuples containing the sampled UUID slots. These describe graph
 generation, including repeated memberships. They are preserved on graph copies
-as provenance, so a peeled core can still refer to memberships of removed nodes.
-They do not describe the core as a newly generated intersection graph.
+as a record of how the graph was generated, so a core can still refer to
+memberships of removed nodes. They do not describe the core as a newly generated
+intersection graph.
 
 ## Probability and projection conventions
 

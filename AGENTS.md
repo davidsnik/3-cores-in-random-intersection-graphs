@@ -7,7 +7,7 @@ equations remain future work.
 
 ## Start here
 
-- `notebooks/01_graphs.ipynb`: the initial notebook's UUID-based `Node` and `Graph` classes.
+- `notebooks/01_graphs.ipynb`: `Node` and `Graph` classes for vertices and undirected graphs.
 - `notebooks/02_algorithms.ipynb`: `construct_k_core`,
   `construct_random_intersection_graph`, and `construct_special_triangle_RIG`.
 - `notebooks/03_triangle_simulation.ipynb`: seeded trials, sweeps, and CSV output;
@@ -31,9 +31,12 @@ make figures   # Replot an existing CSV; run make simulate first if it is missin
 ## Changes
 
 - Keep mathematical explanations and implementations together in the notebooks.
-  Preserve the initial notebook's class-based graph representation and algorithms
+  Preserve the class-based graph representation and existing algorithms
   unless a concrete correctness or usability need justifies a change. Do not
   duplicate domain implementations in Python modules or test files.
+- Write explanations for a reader who is new to the project. Explain what the
+  code does and why, introduce technical terms, and use plain language. Avoid
+  references to earlier implementations or conversations as explanations.
 - Reuse notebook definitions with `%run`: 02 loads 01, and 03 loads 02.
   Notebooks 01 and 02 must only define classes/functions and import dependencies;
   loading them must not simulate, plot, or write files. Keep analysis independent
@@ -49,10 +52,10 @@ make figures   # Replot an existing CSV; run make simulate first if it is missin
 - Pass explicit NumPy generators and assign trial seeds before parallel dispatch.
   Seeds reproduce membership sampling, matching, and measurements; UUID labels
   are intentionally not reproducible. Save replay parameters with measurements.
-- Retain original community slots and membership counts on generated graphs and
-  their copies as generation provenance. Preserve full-vector divisibility
-  conditioning and simple-graph projection. Core construction must leave its
-  input unchanged. Distinguish measurements, heuristics, and theory.
+- Retain sampled community slots and membership counts on generated graphs and
+  their copies as a record of how they were generated. Preserve full-vector
+  divisibility conditioning and simple-graph projection. Core construction must
+  leave its input unchanged. Distinguish measurements, heuristics, and theory.
 - Add meaningful small tests for changed behavior; run `make check`. Tests load
   notebook implementations in fresh kernels. Workflow tests use tiny settings
   and temporary outputs, leaving research measurements untouched.

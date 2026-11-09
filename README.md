@@ -21,8 +21,8 @@ explanation live together in four notebooks:
 
 | Notebook | What it contains |
 | --- | --- |
-| [01_graphs.ipynb](notebooks/01_graphs.ipynb) | The original `Node` and `Graph` classes: neighbours, degrees, edges, and graph copying. |
-| [02_algorithms.ipynb](notebooks/02_algorithms.ipynb) | The original queue-based k-core algorithm and fixed-size-community RIG constructors. |
+| [01_graphs.ipynb](notebooks/01_graphs.ipynb) | How `Node` and `Graph` represent vertices, neighbours, degrees, and edges, and how to copy a graph. |
+| [02_algorithms.ipynb](notebooks/02_algorithms.ipynb) | Finding a graph's k-core and building random intersection graphs from communities of a fixed size. |
 | [03_triangle_simulation.ipynb](notebooks/03_triangle_simulation.ipynb) | Seeded triangle-RIG trials, parallel parameter sweeps, and individual CSV measurements. |
 | [04_triangle_analysis.ipynb](notebooks/04_triangle_analysis.ipynb) | Loading saved measurements, summary statistics, the slope heuristic, and plotting. |
 
@@ -59,10 +59,11 @@ new measurements. `make figures` reuses an existing CSV even when settings have
 changed; if it is missing, run `make simulate` first. Use distinct CSV and figure
 paths in the settings cells to retain different experiments.
 
-The graph classes and core/generation algorithms follow the initial notebook
-implementation. Additions retain community memberships and give each trial an
-explicit random seed. A saved seed replays membership sampling, stub matching,
-and core measurements; UUID vertex labels themselves are freshly generated.
+Generated graphs keep a record of each individual's community memberships.
+Each simulation trial also saves the random seed used to generate it. With the
+same code and dependencies, that seed reproduces the community assignments and
+core measurements. Vertex labels are newly generated each time; the labels do
+not affect the graph's structure or core size.
 
 The plot's bands describe variation between graphs, and its maximum-slope marker
 is a finite-size heuristic rather than a theoretical critical value.
