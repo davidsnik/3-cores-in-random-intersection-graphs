@@ -1,0 +1,38 @@
+[project]
+name = "rigcore"
+version = "0.1.0"
+description = "An academic study of 3-cores in random intersection graphs"
+readme = "README.md"
+requires-python = ">=3.12"
+# Exact dependency versions are recorded in uv.lock.
+dependencies = [
+    "joblib",
+    "matplotlib",
+    "numpy",
+]
+
+# Kernel support and fresh-kernel notebook tests; VS Code supplies the notebook UI.
+[dependency-groups]
+dev = [
+    "ipykernel",
+    "nbclient",
+    "nbformat",
+    "pytest",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+# IPython %run supplies these notebooks' shared names. Fresh-kernel tests check
+# their execution because static linting cannot follow notebook dependencies.
+[tool.ruff.lint.per-file-ignores]
+"notebooks/02_algorithms.ipynb" = ["F821"]
+"notebooks/03_triangle_simulation.ipynb" = ["F821"]

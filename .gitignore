@@ -1,0 +1,44 @@
+# Local Python environment, packaging, and tool caches
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.uv-cache/
+
+# Notebook checkpoints are generated; the notebook itself is project source
+.ipynb_checkpoints/
+
+# Local environment settings and operating-system files
+.env
+.env.*
+.DS_Store
+*~
+
+# Generated experiment output; keep the directory placeholders
+/results/runs/*
+!/results/runs/.gitkeep
+/results/figures/*
+!/results/figures/.gitkeep
+
+# LaTeX intermediates and build output; source/figure PDFs stay trackable
+/report/build/*
+!/report/build/.gitkeep
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
