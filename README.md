@@ -35,12 +35,13 @@ explanation live together in the notebooks:
 | [02_algorithms.ipynb](notebooks/02_algorithms.ipynb) | Core pruning, random intersection graphs from fixed-size communities, and configuration-model pairing with explicit multigraph conventions. |
 | [03_triangle_simulation.ipynb](notebooks/03_triangle_simulation.ipynb) | A pilot run, comparisons across graph sizes, and closer experiments near the transition, with seeded parallel trials and CSV measurements. |
 | [04_triangle_analysis.ipynb](notebooks/04_triangle_analysis.ipynb) | Comparing graph sizes, inspecting individual outcomes near the transition, and checking the sensitivity of the slope marker. |
-| [05_configuration_theory.ipynb](notebooks/05_configuration_theory.ipynb) | Why neighbours support each other in the 3-core; deriving the configuration-model equation, core density, and discontinuous transition. |
+| [05_configuration_theory.ipynb](notebooks/05_configuration_theory.ipynb) | CM support equations, density and fold coefficients, independent derivative checks, and random-degree critical fluctuation constants. |
 | [06_configuration_simulation.ipynb](notebooks/06_configuration_simulation.ipynb) | Parallel triangle and configuration-model simulations with the same sizes, lambda values, and repeat counts, plus degree and clustering checks. |
 | [07_configuration_analysis.ipynb](notebooks/07_configuration_analysis.ipynb) | Validating configuration-model theory, comparing all models, and examining finite-size and graph-convention effects from saved measurements. |
-| [08_triangle_cavity.ipynb](notebooks/08_triangle_cavity.ipynb) | Deriving triangle support messages, solving the maximal cavity fixed point, and locating the predicted transition. |
+| [08_triangle_cavity.ipynb](notebooks/08_triangle_cavity.ipynb) | Joint triangle support, maximal cavity fixed points, density fold coefficients, and independent derivative/branch checks. |
 | [09_triangle_refinement.ipynb](notebooks/09_triangle_refinement.ipynb) | Additional seeded triangle trials concentrated near the cavity prediction, reusing the graph sampler and core algorithm. |
 | [10_triangle_comparison.ipynb](notebooks/10_triangle_comparison.ipynb) | Validating the triangle prediction against saved broad and refined trials, then comparing both models and their transitions. |
+| [theory_comparison.ipynb](notebooks/theory_comparison.ipynb) | Deterministic verification of both theories; regenerating the report's critical-value table, near-threshold figure, and diagnostic CSVs without graph simulations. |
 
 Read the notebooks in that order. Each notebook runs from top to bottom in a
 fresh kernel: notebook 02 loads definitions from 01 with `%run`, and notebook 03
@@ -51,7 +52,8 @@ and 05 to generate the comparison; notebook 07 loads only 05 and reads saved mea
 so changing a plot never generates another graph. Notebook 08 contains triangle
 theory definitions only. Notebook 09 generates the targeted additional data;
 notebook 10 loads both theory notebooks and saved measurements, without loading
-graph construction or simulation.
+graph construction or simulation. The separate `theory_comparison` notebook loads
+05 and 08 to evaluate deterministic checks and export the selected theory assets.
 
 Notebooks 03 and 04 each have a commented `config` dictionary. Start
 with `stage = "pilot"` in notebook 03 to explore a broad range of membership means and
@@ -225,15 +227,18 @@ convergence rate. Notebook 10 examines the critical region separately.
 
 The two-column paper template lives in `report/`, with title, author, affiliation,
 abstract, and section placeholders. Its mathematical environments, bibliography,
-figures, tables, and cross-references are configured; report content has not yet
-been written. Its seven-section outline follows the finite-size research
-questions and includes detailed writing notes. Install a TeX distribution and
+figures, tables, and cross-references are configured. The introduction and
+graph-model and theoretical sections, including Appendix A, are written; the
+remaining sections contain writing prompts.
+The seven-section structure follows the finite-size research questions and
+includes detailed writing notes. Install a TeX distribution and
 `latexmk` separately from `uv`, then
 run:
 
 ```bash
+make theory-figures # Verify theory and regenerate its paper table and figure
 make report        # Build report/build/main.pdf without running experiments
-make report-full   # Run comparison and triangle studies, then build the PDF
+make report-full   # Regenerate theory assets, run baseline studies, then build PDF
 make report-clean  # Remove generated report build files
 ```
 

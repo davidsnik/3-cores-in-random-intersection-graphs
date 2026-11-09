@@ -8,7 +8,11 @@
 % Figures and tables use the class's native caption formatting.
 \usepackage{graphicx}
 \graphicspath{{figures/}}
+% Deterministic model schematics are kept as editable vector source in figures/.
+\usepackage{tikz}
 \usepackage{booktabs}
+% Keep a section opening with enough text to introduce its first definition.
+\usepackage{needspace}
 
 % Compact float spacing from the reference project's preamble.
 \setlength{\textfloatsep}{0.5em}
@@ -17,6 +21,11 @@
 \setlength{\abovecaptionskip}{0.2em}
 \setlength{\belowcaptionskip}{0em}
 \raggedbottom
+
+% Start body paragraphs without indentation and separate them by half a line.
+% Keep these settings here so every section uses the same paragraph style.
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5\baselineskip plus 1pt minus 1pt}
 
 % Theorem-like statements share one counter within each section.
 % Equations retain the continuous numbering supplied by IEEEtran.

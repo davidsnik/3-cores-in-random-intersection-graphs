@@ -1,45 +1,308 @@
+% Avoid leaving only a heading and two lines at the foot of the preceding column.
+\Needspace{14\baselineskip}
 \section{Graph models and core observables}
 \label{sec:models-and-observables}
 
 \subsection{The 3-core and its size}
 \label{sec:core-and-observables}
-% Define the maximal induced 3-core, pruning interpretation, and normalization
-% by all n input vertices, including isolates. Distinguish an ordinary graph
-% core from a hypergraph core. Introduce notation before using it in the theory.
-% Define model index M, R_{n,M}=|Core_3(G_{n,M})|/n, substantial-core event
-% A_{n,M}={R_{n,M} >= epsilon_M}, and conditional versus unconditional summaries.
-% A core may be disconnected; do not substitute its largest connected component.
-% Introduce lambda_{c,M}, limiting density rho_M(lambda), and positive right-hand
-% jump rho_{c,M} before using critical coordinates in the next section.
-% Define degree moments, degree histograms, and simple-projection transitivity.
-% Future labels: def:graph-core, eq:core-fraction, eq:substantial-core.
-\placeholder{[Pruning, core fraction, and the substantial-core event.]}
+
+To find the 3-core, remove every vertex with fewer than three remaining
+neighbours, then repeat: vertices that initially had enough neighbours may
+lose them during the deletions. A simple undirected graph $G=(V,E)$ has
+vertex set $V$ and edge set $E$; edges join distinct vertices and each pair
+has at most one edge.
+Write $n=|V|\geq1$ for its initial number of vertices. For a subset $S\subseteq V$,
+the induced subgraph $G[S]$ keeps the vertices in $S$ and every edge of $G$
+between them. Let $d_{G[S]}(v)$ count the neighbours of $v$ in this subgraph.
+The simultaneous deletion rounds are
+\begin{equation}
+  S_0=V,\qquad
+  S_{t+1}=\{v\in S_t:d_{G[S_t]}(v)\geq3\},
+  \label{eq:core-pruning}
+\end{equation}
+where $t=0,1,\ldots$ counts rounds. The sets decrease and eventually stop
+changing. If $S_\infty$ is the final set, then
+$C_3(G)=G[S_\infty]$ is the 3-core~\cite{janson2007kcore}.
+
+This procedure gives the unique largest induced subgraph with minimum degree
+at least three. Indeed, if $G[W]$ already has that minimum degree, none of its
+vertices can be the first vertex of $W$ removed: its three neighbours in $W$
+would still be present. Thus every such $W$ remains inside the final set,
+which itself meets the degree condition. This also proves that deleting
+eligible vertices one at a time, in any order, gives the same answer.
+The core may be disconnected; we count all its vertices, rather than only
+its largest connected component.
+
+The implementation uses a queue to avoid rescanning the whole graph after
+each deletion. Initially queue all vertices of degree below three.
+Remove the first queued vertex and its incident edges, update the degrees
+of its remaining neighbours, and queue a neighbour when its degree falls
+from three to two. Stop when the queue is empty. Each vertex is queued at
+most once, giving work proportional to $|V|+|E|$.
+The input graph is left unchanged. \Cref{fig:core-pruning} illustrates why a
+single pass would be insufficient. For the configuration multigraph defined
+in \cref{sec:configuration-model}, the same rule uses incident edge ends
+instead of distinct neighbours, with the degree convention specified there.
+
+\begin{figure}[b]
+  \centering
+  \input{figures/core_pruning}
+  \caption{A fixed illustrative graph, not a random sample. Vertices $y,z$
+    have degree two and disappear in the first simultaneous round. Vertex $x$
+    initially has degree three, but loses $y$ and disappears in the second.
+    The four mutually connected vertices $a,b,c,d$ form the final 3-core:
+    its size is four and its fraction of the initial graph is $4/7$.}
+  \label{fig:core-pruning}
+\end{figure}
+
+We use $M$ to distinguish the graph constructions defined below.
+Their parameter $\lambda$ controls the mean number of memberships per vertex,
+as specified in \cref{sec:triangle-model,sec:configuration-model}.
+Let $G_{n,M}(\lambda)$ be the random input graph and define
+\begin{equation}
+  \begin{split}
+    N_{n,M}(\lambda)&=|V(C_3(G_{n,M}(\lambda)))|,\\
+    R_{n,M}(\lambda)&=N_{n,M}(\lambda)/n.
+  \end{split}
+  \label{eq:core-fraction}
+\end{equation}
+The denominator includes every initial vertex, including isolates.
+When $n,M,\lambda$ are understood, we write simply $R$.
+A core is empty if $R=0$. To separate substantial outcomes from small
+nonempty cores, choose a fraction $\varepsilon_M\in(0,1]$ and set
+\begin{equation}
+  \begin{split}
+    A_{n,M}(\lambda)&=\{R_{n,M}(\lambda)\geq\varepsilon_M\},\\
+    p_{n,M}(\lambda)&=\Prob(A_{n,M}(\lambda)).
+  \end{split}
+  \label{eq:substantial-core}
+\end{equation}
+Thus survival means at least $\lceil n\varepsilon_M\rceil$ vertices remain;
+equality with the cutoff is included. The baseline analyses use
+$\varepsilon_M=0.05$ for all three graph conventions, with $0.02$ and $0.08$
+as sensitivity checks in the triangle comparison. These are analysis choices
+applied after pruning; they do not change the graph or its core.
+At finite $n$, $0<R<\varepsilon_M$ means a nonempty core below the chosen
+cutoff. A \emph{macroscopic} core instead describes growth with $n$:
+its size remains a positive fraction of the input size. A single
+finite-graph cutoff cannot establish that asymptotic property.
+
+An unconditional mean or distribution includes all outcomes. The
+conditional distribution keeps only substantial ones:
+\begin{equation}
+  F^+_{n,M}(r;\lambda)
+  =\Prob\!\left(R_{n,M}(\lambda)\leq r\mid A_{n,M}(\lambda)\right),
+  \label{eq:conditional-core-law}
+\end{equation}
+for $r\in[0,1]$, provided $p_{n,M}(\lambda)>0$.
+Its mean and standard deviation describe sizes among survivors, whereas
+$p_{n,M}$ describes how often they occur. The unconditional mean also
+includes below-cutoff cores, which need not be empty. In an empirical
+sample, estimate $p_{n,M}$ by the proportion meeting the cutoff and $F^+_{n,M}$
+by the proportion of those survivors whose fractions are at most $r$.
+With no survivors, conditional estimates are unavailable, not zero;
+a sample standard deviation requires at least two. Existing baseline
+size summaries are unconditional; conditional distributions are the separate
+target of the finite-size investigation.
 
 \subsection{Poisson triangle communities}
 \label{sec:triangle-model}
-% Define Poisson(lambda) memberships, the incidence graph, and triangle factors.
-% State full-vector conditioning on a membership sum divisible by three,
-% uniform matching of membership slots, and projection to a simple graph.
-% Explain repeated slots, removal of loops, and merging of repeated edges.
-% Use D_i for memberships and K_i=2D_i for nominal graph degrees throughout.
-% Distinguish membership mean lambda from limiting mean graph degree 2lambda.
-% State the limiting degree law and the local incidence-tree framework;
-% neither alone establishes a limit for the terminal 3-core.
-% Candidate figure: a schematic of overlapping triangles and their incidence graph.
-\placeholder{[Membership model, projection conventions, and parameter meanings.]}
+
+A triangle community connects each of three individuals to the other two.
+Combining such communities allows a vertex to belong to several triangles.
+It also connects neighbours to one another, introducing the local clustering
+discussed in the introduction. The construction is a triangle specialization
+of random intersection graphs with communities~\cite{hofstad2021communities}.
+The following specifies the finite simple graph used in the experiments.
+
+Fix $n\geq1$ individuals, labelled $1,\ldots,n$, and a dimensionless parameter
+$\lambda\geq0$. First propose independent membership counts
+$\widetilde D_1,\ldots,\widetilde D_n$ with
+\begin{equation}
+  \Prob(\widetilde D_i=r)
+  =e^{-\lambda}\frac{\lambda^r}{r!},
+  \label{eq:poisson-memberships}
+\end{equation}
+for integers $r\geq0$. Here $\lambda$ is the mean number of membership places per individual
+\emph{before conditioning}. For $\lambda=0$, every count is zero.
+If the proposed total is not divisible by three, discard the entire vector
+and draw again. Denote the accepted counts by $D_1,\ldots,D_n$ and their
+total by $L=\sum_iD_i$. They have the joint Poisson law conditioned on
+$L\equiv0\pmod3$. They are therefore not exactly independent Poisson variables
+at finite $n$, and their marginal mean need not be exactly $\lambda$.
+No single count is corrected and no leftover memberships are discarded.
+The implementation aborts with an error after $100\,000$ unsuccessful
+proposals; it never substitutes a different construction.
+
+There are now $m=L/3$ communities, each with three labelled places.
+To assign individuals to them:
+\begin{enumerate}
+  \item Make $D_i$ distinct membership tokens labelled $i$ for each
+    individual $i$. Such a token, often called a membership stub,
+    represents one place still to be assigned.
+  \item Uniformly shuffle the $L$ tokens. Fill the three places of community
+    one with the first three tokens, community two with the next three,
+    and so on. Thus every matching of labelled tokens to labelled places
+    has the same probability.
+  \item In each triple, join every pair of distinct individuals, adding an
+    edge only if that pair is not already connected.
+\end{enumerate}
+If $L=0$, there are no communities or edges, but all $n$ vertices remain.
+Uniformity applies to token assignments, not to the resulting simple graphs.
+
+The grouping does not require three different individuals. For example,
+$(i,i,j)$ creates only the edge $\{i,j\}$, while $(i,i,i)$ creates none.
+Repeated triples are also allowed. A connection from a vertex to itself
+is omitted, and every repeated edge is merged into one, both within and
+between communities. This conversion from membership places to edges is the
+simple-graph \emph{projection}; the unmerged membership records are retained.
+\Cref{fig:triangle-construction} shows both overlap and repeated places.
+Equivalently, one can draw an incidence graph with one type of vertex for
+individuals and another for communities, joining them once per assigned
+place. Repeated memberships give repeated incidence edges. Core pruning is
+performed on the projected graph of individuals, not on this incidence
+graph, and does not require a prescribed number of whole triangles to survive.
+
+\begin{figure}[b]
+  \centering
+  \input{figures/triangle_construction}
+  \caption{A fixed membership assignment and its simple projection.
+    The triples $(a,b,c)$ and $(c,d,e)$ create two triangles sharing $c$.
+    The triple $(a,a,b)$ creates no loop and adds no extra copy of $ab$.
+    Membership counts are $(D_a,D_b,D_c,D_d,D_e)=(3,2,2,1,1)$, whereas
+    distinct-neighbour degrees are $(2,2,4,2,2)$. This is an illustration
+    of the construction, not a simulated realization.}
+  \label{fig:triangle-construction}
+\end{figure}
+
+Each membership offers two edge ends, so write $K_i=2D_i$ for the
+\emph{nominal} degree, before loops and repeated edges are removed.
+If $\kappa_i$ is the actual number of distinct neighbours after projection,
+then exactly
+\begin{equation}
+  \kappa_i\leq\min\{n-1,2D_i\}.
+  \label{eq:triangle-degree-bound}
+\end{equation}
+Even a vertex with many memberships can have fewer neighbours because
+some places repeat the same individual. Actual finite degrees can be odd.
+
+For fixed $\lambda>0$ as $n\to\infty$, the divisibility condition has a
+vanishing effect on any fixed number of membership counts.
+Coincidences among the neighbours of a uniformly chosen vertex also become
+unlikely. Its degree therefore converges in distribution to
+\begin{equation}
+  \begin{gathered}
+    K=2D,\qquad D\sim\operatorname{Poisson}(\lambda),\\
+    \pi_{2r}:=\Prob(K=2r)=e^{-\lambda}\lambda^r/r!,\\
+    \pi_{2r+1}=0,\qquad r=0,1,\ldots.
+  \end{gathered}
+  \label{eq:limiting-degree-law}
+\end{equation}
+This is the triangle case of the community degree law in
+\cite[Corollary~2.9 and the erasure discussion in Section~2.4]{hofstad2021communities}.
+It gives $\E[K]=2\lambda$ and $\Var(K)=4\lambda$.
+In particular, it is twice a Poisson variable, rather than a Poisson variable
+of mean $2\lambda$. These are limiting degree statements, not identities
+for the finite projected degrees or a theorem about the final 3-core.
 
 \subsection{The degree-matched configuration model}
 \label{sec:configuration-model}
-% Introduce twice-Poisson degrees and justify matching the limiting degree law;
-% finite triangle degrees need not equal twice their sampled memberships.
-% Define the retained CM multigraph (loops count twice in degree) and the erased
-% simple graph from the same pairing. These are separate core measurements.
-% Current broad study: independent model membership streams at common settings.
-% Planned same-D control: use one full triangle-conditioned vector and CM degrees
-% K_i=2D_i. This exactly matches nominal degrees, not the projected triangle
-% degrees. Record its divisibility conditioning; it differs finitely from the
-% standalone CM with independent twice-Poisson degrees.
-% Define repeated matchings conditional on D as a different source of randomness
-% from resampling D. Give the experimental details in numerical methodology.
-% Degree matching does not isolate clustering from every other correlation.
-\placeholder{[Degree conventions, shared information, and projection controls.]}
+
+The triangle construction joins neighbours in prescribed groups. To compare
+it with connections formed without those groups, give each vertex a number
+of individual edge ends and randomly join the ends in pairs. This is the
+configuration model (CM)~\cite[Section~2]{janson2007kcore}.
+For the implemented benchmark, independently draw
+$D^{\mathrm{CM}}_1,\ldots,D^{\mathrm{CM}}_n$ from
+$\operatorname{Poisson}(\lambda)$ and prescribe degrees
+$K^{\mathrm{CM}}_i=2D^{\mathrm{CM}}_i$.
+These counts are unconditioned: the total degree is automatically even.
+Thus each prescribed degree has exactly the law in
+\cref{eq:limiting-degree-law}, at every $n$.
+
+Create $K^{\mathrm{CM}}_i$ distinct edge ends, or half-edge stubs, at vertex $i$.
+Uniformly shuffle all ends and pair consecutive entries. A pair labelled
+$(i,j)$ becomes an undirected edge, and every end is used.
+Every matching of the labelled ends is equally likely; the resulting graphs
+need not be equally likely. A general prescribed sequence with odd total
+degree is rejected with an error, rather than repaired. That case cannot
+arise for these twice-Poisson degrees.
+
+Two ends of the same vertex form a \emph{self-loop}. Different pairs can
+join the same two vertices, forming \emph{parallel edges}. The retained
+CM graph keeps all of these, so it is a multigraph. Its degree counts
+incident ends: a loop contributes two and each parallel edge contributes
+separately. The degree at vertex $i$ is therefore exactly $K^{\mathrm{CM}}_i$.
+For core pruning, keep a list of neighbours at each vertex, repeating a
+neighbour once per edge to it and listing the vertex itself twice per loop.
+The length of this adjacency list is its degree. On removing a vertex, mark it absent
+first, then reduce each remaining neighbour's degree once per edge to it.
+Its loops affect no other vertex. Queue a neighbour when its degree
+crosses from three to two. The definition and order-independence argument
+in \cref{sec:core-and-observables} apply with this degree convention.
+It need not mean three distinct neighbours: two vertices joined by three
+parallel edges already form a multigraph 3-core.
+
+From the \emph{same} pairing we also obtain an erased simple CM graph:
+delete every loop and retain one edge per unordered pair of distinct vertices.
+Prune this graph separately using distinct-neighbour degrees.
+Erasing can reduce degrees and core size, and can produce odd degrees.
+It is different from rejecting an entire pairing until a simple graph is
+obtained; in particular, its degrees need not equal the prescribed sequence.
+The retained multigraph is the direct benchmark for the CM theory in
+\cref{sec:configuration-theory}. The erased version checks the finite effect
+of imposing the simple-graph convention used for triangles.
+
+In the existing comparison, triangle and CM graphs use the same $n$ and
+$\lambda$, with independently generated membership vectors and matchings.
+Only the retained and erased CM outcomes share a pairing.
+Here \emph{degree-matched} means a common limiting degree distribution,
+not equal finite degree sequences, empirical histograms, or mean degrees.
+A planned additional control would use one triangle-conditioned vector $D$
+for both constructions and give the CM degrees $2D_i$.
+It would match nominal degrees exactly, but still not generally match the
+triangle graph's projected degrees. This shared-vector control is not part
+of the existing baseline, and its conditioning differs from the unconditioned
+CM sampler above.
+
+To record finite departures from the common limiting law, let $\kappa_i$ be
+the degree of vertex $i$ in the graph being measured: incident ends for the
+retained CM and distinct neighbours for either simple graph.
+The broad comparison computes all these degrees, including zeros.
+It saves their histogram, mean, and population variance:
+\begin{equation}
+  \begin{split}
+    H(j)&=\#\{i:\kappa_i=j\},\qquad j=0,1,\ldots,\\
+    \bar\kappa&=\frac1n\sum_{i=1}^n\kappa_i,\qquad
+    v_\kappa=\frac1n\sum_{i=1}^n(\kappa_i-\bar\kappa)^2.
+  \end{split}
+  \label{eq:degree-diagnostics}
+\end{equation}
+It also records the fraction $\sum_{j\text{ odd}}H(j)/n$ and the nominal
+mean $n^{-1}\sum_iK_i$, using the corresponding model's nominal degrees.
+For either construction, let $\ell$ count loops in the edge list before
+erasure and $b$ count non-loop edge copies beyond the first per vertex pair.
+For triangles, this list contains the three pairs of places from each
+community. Erasure loses exactly $\ell+b$ edges, reducing total degree by
+$2(\ell+b)$. These diagnostics quantify projection loss.
+
+Clustering is measured on the simple graph in all cases. If it contains
+$\tau$ triangles and has distinct-neighbour degrees $s_i$, define
+\begin{equation}
+  \mathcal T=\frac{3\tau}{\sum_{i=1}^n\binom{s_i}{2}},
+  \label{eq:simple-transitivity}
+\end{equation}
+with $\mathcal T=0$ when the denominator is zero.
+The denominator counts pairs of neighbours about a common vertex.
+Each triangle closes three such pairs, so $\mathcal T$ is their connected
+fraction, called transitivity. Both CM versions share this diagnostic because
+they share their simple projection; it is measured before core pruning.
+
+This benchmark preserves the limiting number of connections per vertex
+while removing the requirement that they arrive in triangle communities.
+The CM can still contain triangles formed by chance. Degree matching does
+not control every correlation between vertices or every dependence created
+by communities. Differences between the models therefore reflect those
+structural changes together, rather than identifying an effect of clustering
+alone. The next section develops the respective predictions for the measured
+core fractions, keeping their different theoretical justifications explicit.

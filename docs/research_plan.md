@@ -1,7 +1,9 @@
 # Research direction and next phase
 
-This is the agreed scientific plan. The report outline is a writing roadmap;
-the additional finite-size experiments below are **planned, not implemented**.
+This is the agreed scientific plan. The introduction, model definitions,
+theoretical analysis, and supporting Appendix A are written. The remaining
+report sections are writing roadmaps; the additional finite-size experiments
+below are **planned, not implemented**.
 
 ## Research question
 
@@ -37,16 +39,26 @@ using them in predictions.
   incidence-tree local limit and degree law for community graphs.
 - **Existing analytical prediction:** the CM support equation and the triangle
   cavity calculation. Triangle neighbours within a motif are resolved jointly;
-  independence applies between limiting incidence-tree branches. Notebook 08
-  already derives the triangle message-coordinate square-root expansion and
-  checks fold nondegeneracy numerically.
-- **To derive and verify:** the CM fold expansion and both density amplitudes in
+  independence applies between limiting incidence-tree branches.
+- **Verified deterministic expansion:** notebooks 05 and 08 derive both density
+  amplitudes in
   $\rho_M(\lambda)=\rho_{c,M}+a_M\sqrt{\lambda-\lambda_{c,M}}
-  +O(\lambda-\lambda_{c,M})$, including the derivative calculation for $a_M$.
-- **Finite-size hypothesis:** an $n^{-1/2}$ parameter window combined with that
+  +O(\lambda-\lambda_{c,M})$. Analytic derivatives agree with finite differences,
+  and direct solutions approach the predicted square-root coefficients.
+  The CM critical shape is justified analytically; the triangle branch's
+  global shape is checked numerically, without an analytic uniqueness claim.
+- **Triangle finite-size hypothesis:** an $n^{-1/2}$ parameter window combined with that
   square root suggests $n^{-1/4}$ conditional density fluctuations, or
   $n^{3/4}$ core-count fluctuations. This scaling argument alone proves neither
   a triangle-core limit theorem nor a Gaussian effective perturbation.
+
+| Model | $\lambda_c$ | $\rho_c$ | $a_M$ |
+| --- | ---: | ---: | ---: |
+| CM multigraph | 1.287720 | 0.137889 | 0.317959 |
+| Triangle cavity | 1.228598 | 0.081112 | 0.278553 |
+
+These are values of the theoretical equations. The triangle row remains a
+cavity prediction for the terminal core of the finite simple graph.
 
 A candidate occurrence model, fitted separately by size and model, is
 $\Pr(A_{n,M})\approx\Phi((\lambda-\mu_{n,M})/w_{n,M})$, with $w_{n,M}>0$.
@@ -67,11 +79,18 @@ Do not fit a separate density location, amplitude, or spread. Propagate
 occurrence-calibration uncertainty into the conditional predictions. Check
 occurrence-model fit as well as conditional fit.
 
-The CM fluctuation theorem is the benchmark, with its hypotheses to be
-specialized to this random twice-Poisson degree family. Check the effect of
-random degree sequences and divisibility conditioning explicitly. Local weak
-convergence does not justify exchanging the large-graph and infinite-pruning
-limits for triangles; that terminal-core step remains a cavity assumption.
+The CM fluctuation theorem is specialized to this random twice-Poisson degree
+family, using its nondegenerate minimum and exponential moments. Both independent
+degree sampling and edge pairing contribute to the residual variance. Their
+combined effective parameter SD is $\tau_{\mathrm{CM}}=1.956248828$; this is a
+theorem-based benchmark, not a fitted triangle constant. Appendix A also shows
+that conditioning the membership sum modulo three does not change the leading
+empirical-degree central limit law. Finite conditioned and unconditioned
+ensembles still differ, and same-vector matching controls require separate
+statistical analysis. These results do not transfer automatically to the erased
+CM or to triangles. Local weak convergence does not justify exchanging the
+large-graph and infinite-pruning limits for triangles; that terminal-core step
+remains a cavity assumption.
 
 ## Controlled comparisons and statistical safeguards
 
@@ -118,7 +137,9 @@ limits for triangles; that terminal-core step remains a cavity assumption.
 
 | Component | Existing evidence and planned extension |
 | --- | --- |
-| Theory: 05 and 08 | Fixed points, maximal branches, critical points, density predictions and numerical checks exist; 08 also derives the triangle message-coordinate fold expansion. Both density amplitudes, the CM fold expansion and finite-size theorem specialization still need documentation and verification. |
+| Theory: 05 and 08 | Fixed points, maximal branches, critical points, both density-fold amplitudes and independent numerical checks are complete. The CM fluctuation specialization includes degree and pairing noise; the modulo-three conditioning argument is in Appendix A. Triangle terminal-core and fluctuation claims retain their stated assumptions. |
+| Deterministic comparison | `theory_comparison.ipynb` explicitly evaluates derivative, branch and original covariance checks, and regenerates the paper table/figure with `make theory-figures`; no random graphs or simulation measurements are used. |
+| Stochastic prediction helpers: 05 | Conditional CDF and quantile functions evaluate the proposed law for supplied amplitude, centre and width. They do not fit survival data or validate conditional sizes. |
 | Sampling and peeling: 02, 06, 09 | Reproducible generation, pruning, parallel trials and protected CSV output exist. Notebook 02 already accepts a fixed-count sampler for triangles and an explicit degree vector for CM; add paired/repeated-vector orchestration, IDs and checks rather than a new graph algorithm. |
 | Analysis: 07 and 10 | Saved-data density validation, individual outcomes, degree/erasure diagnostics, uncertainty in means and cutoff sensitivity exist. Survival fits, width scaling and independently validated conditional distribution predictions are not implemented. |
 | Saved measurements | Reuse the broad 06 comparison and focused 09 triangle data for exploratory baselines; retain their different grids and provenance. Existing triangle refinement CSVs have seven basic fields and lack the proposed vector and defect diagnostics. |
@@ -132,9 +153,11 @@ their common experimental settings must not be described as exact degree pairing
 
 ## Immediate roadmap
 
-1. **Theory and protocol:** extend 05/08 with the remaining fold/density
-   derivatives and independent checks; verify CM theorem assumptions. Freeze cutoffs, metrics,
-   calibration/validation splits and uncertainty rules before new measurements.
+1. **Freeze the pilot protocol:** use the completed theory and its verified
+   constants to fix cutoffs, metrics, calibration/validation splits, uncertainty
+   rules, and replay metadata before new measurements. `make theory-figures`
+   regenerates the deterministic checks and report assets; it does not launch
+   the pilot.
 2. **Focused pilot:** start with $n\in\{10000,30000\}$ and each model's grid
    $u\in\{-2,-1,0,1,2\}$. The aim is to reassess conditional spread, not estimate
    an asymptotic exponent from two sizes. Use an initial screening batch of

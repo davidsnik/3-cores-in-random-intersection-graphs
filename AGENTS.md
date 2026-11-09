@@ -5,9 +5,11 @@ in random intersection graphs. The root assignment PDF defines the scope.
 The selected direction is finite-size scaling and fluctuations near the
 discontinuous 3-core transition in Poisson triangle-community graphs, using a
 degree-matched configuration model (CM) as the benchmark.
-Baseline simulation and comparison are implemented: CM theory is in notebook 05;
-triangle cavity equations and baseline validation are in notebooks 08–10.
-The additional finite-size investigation is planned, not implemented.
+Baseline simulation and comparison are implemented. Notebooks 05 and 08 now
+derive and verify both density-fold coefficients and the CM fluctuation
+constants; `notebooks/theory_comparison.ipynb` regenerates the theory table,
+figure, and independent checks. The additional finite-size simulations and
+held-out statistical validation are planned, not implemented.
 
 ## Agreed research direction
 
@@ -18,7 +20,7 @@ fluctuations (test `n^{-1/4}`), and prediction of full conditional distributions
 from theory plus survival-only calibration. The approximation may fail; a
 careful account of its failure is a useful scientific result.
 
-- Derive critical densities and density-fold amplitudes from theory. Fit
+- Use the verified theoretical critical densities and density-fold amplitudes. Fit
   occurrence parameters only to survival indicators; never fit the target
   conditional density's location, amplitude, or spread. Split future validation
   by complete membership vector and propagate calibration uncertainty.
@@ -30,13 +32,19 @@ careful account of its failure is a useful scientific result.
   Plan sufficient positive outcomes, appropriate uncertainty, and absolute as
   well as jump-relative cutoffs before the new campaign.
 - Distinguish CM theorems, exact local motif calculations, the triangle
-  terminal-core cavity assumption, and finite-size hypotheses. The existing
-  triangle message-coordinate fold is derived; density amplitudes, CM
-  fluctuation-theorem specialization, and held-out tests still need work.
+  terminal-core cavity assumption, and finite-size hypotheses. Both density
+  amplitudes are verified. The CM specialization includes degree and matching
+  noise, with effective parameter SD `tau_CM = 1.956248828`; its global critical
+  shape and the leading effect of divisibility conditioning are justified.
+  Triangle terminal-core and fluctuation predictions remain hypotheses; no
+  analytic global uniqueness theorem for the triangle fold is claimed.
 - The report has seven main sections: motivation; models; critical predictions;
   numerical methodology; results by question; discussion; conclusion. Preserve
-  the single-author IEEEtran style. Keep this stage a writing roadmap rather
-  than complete scientific prose. See [report/README.md](report/README.md).
+  the single-author IEEEtran style. The introduction, graph models, theoretical
+  analysis, and supporting Appendix A are written; numerical methodology,
+  results, discussion, conclusion, and experiment Appendix B remain roadmaps.
+  Keep hypotheses separate from findings as the report is developed.
+  See [report/README.md](report/README.md).
 
 ## Start here
 
@@ -50,18 +58,24 @@ careful account of its failure is a useful scientific result.
 - `notebooks/04_triangle_analysis.ipynb`: independent saved-data analysis and
   figures; edit its `config` dictionary to choose input, output, and smoothing.
 - `notebooks/05_configuration_theory.ipynb`: the configuration-model support
-  equation, core density, critical point, and numerical prediction functions.
+  equation, core density, critical point, density-fold coefficient, and
+  matching/random-degree fluctuation constants; reusable conditional CDF and
+  quantile helpers take supplied stochastic parameters without fitting them.
 - `notebooks/06_configuration_simulation.ipynb`: parallel triangle and
   configuration-model trials under the same experimental conditions, retaining
   both multigraph and erased-simple measurements and degree diagnostics.
 - `notebooks/07_configuration_analysis.ipynb`: saved-data comparison with theory,
   finite-size diagnostics, model differences, and figures; no graph generation.
 - `notebooks/08_triangle_cavity.ipynb`: triangle cavity messages, joint support
-  within a motif, maximal fixed points, criticality, and numerical predictions.
+  within a motif, maximal fixed points, criticality, and verified density-fold
+  derivatives and coefficient.
 - `notebooks/09_triangle_refinement.ipynb`: reproducible additional triangle
   trials near the predicted threshold, reusing the graph/simulation algorithms.
 - `notebooks/10_triangle_comparison.ipynb`: saved-data validation of the triangle
   prediction and final comparison of both models, with scientific interpretation.
+- `notebooks/theory_comparison.ipynb`: explicit deterministic derivative,
+  branch, and covariance checks, with the Chapter 3 table and figure exports;
+  it generates no random graphs and reads no simulation measurements.
 - `report/main.tex`: the two-column LaTeX paper scaffold; front matter lives here,
   with shared formatting in `preamble.tex`, body files in `sections/`, selected
   figures in `figures/`, and bibliography entries in `references/refs.bib`.
@@ -83,12 +97,13 @@ make comparison           # Execute 06, then analyze its saved data in 07
 make comparison-simulate  # Run matched-condition triangle and configuration trials
 make comparison-figures   # Regenerate comparison plots without simulating
 make theory               # Execute 05, which defines theory without saving files
+make theory-figures       # Verify both theories and regenerate the report table/figure
 make triangle-theory      # Execute the definitions-only triangle theory in 08
 make triangle-refine      # Run additional triangle trials near the prediction
 make triangle-figures     # Analyze saved 06/09 data against both predictions
 make triangle-study       # Execute 09, then 10; existing measurements are protected
 make report               # Build report/build/main.pdf without running notebooks
-make report-full          # Run existing baseline studies, then build the report
+make report-full          # Regenerate theory assets, run baseline studies, build report
 make report-clean         # Remove generated report build files
 ```
 
@@ -104,6 +119,8 @@ make report-clean         # Remove generated report build files
 - Reuse notebook definitions with `%run`: 02 loads 01, and 03 loads 02.
   Notebook 06 loads 02 and 05; notebook 07 loads only 05.
   Notebook 10 loads only the two theory notebooks, 05 and 08.
+  The explicit `theory_comparison.ipynb` also loads only 05 and 08, evaluates
+  checks, and exports deterministic paper assets; it never simulates graphs.
   Notebooks 01, 02, 05, and 08 must only define classes/functions and import dependencies;
   loading them must not simulate, plot, or write files. Keep analysis independent
   of graph construction so saved measurements can be plotted in a fresh kernel.

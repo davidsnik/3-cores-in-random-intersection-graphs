@@ -33,6 +33,7 @@ make run           # Run the selected stage in 03, then analyze its data in 04
 make simulate      # Execute 03 and save the selected stage's CSVs
 make figures       # Execute 04 against a saved stage; no simulation
 make theory        # Execute the definitions-only theory notebook 05
+make theory-figures # Verify both theories; regenerate paper table/figure and diagnostics
 make comparison    # Run the common-condition simulations in 06, then analysis in 07
 make comparison-simulate  # Execute 06 and save one comparison CSV per size
 make comparison-figures   # Execute 07 against saved comparison data; no simulation
@@ -41,7 +42,7 @@ make triangle-refine  # Execute targeted additional triangle trials in 09
 make triangle-figures # Execute 10 against saved 06 and 09 measurements
 make triangle-study  # Run 09, then 10; existing trial CSVs remain protected
 make report        # Build report/build/main.pdf using selected report figures
-make report-full   # Run comparison, triangle-study, then compile the report
+make report-full   # Regenerate theory assets, run baseline studies, then compile
 make report-clean  # Remove generated report build files
 make test          # Run pytest, including fresh-kernel notebook checks
 make smoke         # Run a tiny simulation and analysis with temporary outputs
@@ -209,8 +210,8 @@ used by `report/preamble.tex`. This is separate from `uv` and `make setup`.
 bibliography and repeated passes for references. It does not run notebooks or
 require exploratory results. `make report-clean` removes generated build files.
 
-`make report-full` runs `make comparison`, then `make triangle-study`, then
-`make report`, in that order. It uses the settings saved in notebooks 06–10;
+`make report-full` runs `make theory-figures`, `make comparison`,
+`make triangle-study`, then `make report`, in that order. It uses the settings saved in notebooks 06–10;
 the defaults include substantial parallel experiments. Trial-file protection
 still applies: choose fresh output directories in 06 and 09, align the analysis
 inputs in 07 and 10, or explicitly enable `overwrite = True` when replacement is
@@ -223,9 +224,31 @@ the proposed finite-size calibration/validation pilot.
 
 See [report/README.md](../report/README.md) for mathematical environments,
 references, citations, and one- or two-column figures and tables. The report
-currently contains headings, writing prompts, source comments, and a verified
-working bibliography. Replace the temporary `\nocite` list with citations at
-the relevant claims when writing the scientific prose.
+contains a cited introduction, complete model definitions with explanatory
+schematics, and Chapter 3 with verified critical-point calculations and finite-size
+predictions. Appendix A records derivative formulas, CM theorem assumptions,
+variance calculations, and numerical checks. The remaining
+sections contain headings, writing prompts, and source comments. Cite sources
+at the relevant claims as these sections are developed.
+
+## Rebuilding the theoretical results
+
+`make theory-figures` executes `notebooks/theory_comparison.ipynb` in a fresh
+kernel. It reads only the definitions in 05 and 08, checks derivatives and
+branch expansions, evaluates the CM fluctuation constant, and exports:
+
+- `report/tables/theory_critical_values.tex`: generated six-decimal paper table.
+- `report/figures/theory_fold_comparison.pdf`: selected vector figure.
+- `results/figures/theory/`: full-precision values, derivative/branch checks,
+  density curves, covariance checks, and a PNG preview.
+
+The first two are selected report source assets. Commit them so `make report`
+works without Python execution. The diagnostic directory is generated and
+ignored. Repeated execution replaces these named deterministic products; it
+never reads or overwrites simulation CSVs. Notebooks 05 and 08 remain
+imports/definitions only when loaded. The CDF/quantile helpers in 05 evaluate
+specified stochastic predictions; occurrence fitting and independent finite-size
+validation are still future work.
 
 ## Modifying the project
 

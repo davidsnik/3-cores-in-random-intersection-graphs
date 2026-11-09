@@ -1,26 +1,217 @@
-% Called after \appendices in main.tex; these are supporting paper sections.
-% Keep core definitions, assumptions, and headline results in the main text.
+% Called after \appendices in main.tex. Essential ideas remain in Section 3.
 \section{Supplementary derivations and checks}
 \label{app:derivations-and-checks}
 
-\subsection{Derivations and theorem assumptions}
+\subsection{Derivatives and fluctuation constants}
 \label{app:support-calculations}
-% Reserve longer generating-function manipulations, the triangle scalar
-% reduction and its admissible domain, and derivative/tangency calculations.
-% Refer back to the main equations instead of giving competing definitions.
-% Add longer density-derivative calculations and the CM fluctuation-theorem
-% checklist: moments, nondegenerate minimum, degree-vector randomness, varying
-% parameter sequences, and the effect of divisibility conditioning.
-% The main text must still state the assumptions and theoretical status.
-\placeholder{[Supporting algebra, density amplitudes, and theorem checks.]}
 
-\subsection{Independent numerical and local checks}
+For the CM, write $F(x,\lambda)=F_\lambda(x)$, $r=1-x$, and
+$E=\exp\{-\lambda x(2-x)\}$. Differentiating the closed forms gives
+\begin{align}
+ F_x&=2\lambda xrE(3+2\lambda r^2),\label{eq:cm-fold-fx}\\
+ F_\lambda&=x^2E[3-2x+2\lambda(2-x)r^2],\label{eq:cm-fold-flambda}\\
+ F_{xx}&=2\lambda E\big[(1-2x)(3+2\lambda r^2)\nonumber\\
+       &\hspace{35mm}-2\lambda xr^2(5+2\lambda r^2)\big].
+ \label{eq:cm-fold-fxx}
+\end{align}
+The binomial-tail derivative also gives
+$\mathcal R_{\mathrm{CM},x}=\lambda xF_x$.
+At the fold this is simply $\lambda_cx_c>0$. These formulas establish the
+coefficient in \cref{eq:density-square-root} without fitting a branch curve.
+
+The uniqueness condition needed by the CM critical theorem can be checked
+analytically here. For $0<\lambda\leq1.3$,
+\begin{equation}
+ \begin{split}
+  (\log F_x)_{xx}
+   &=-x^{-2}-r^{-2}+2\lambda
+       +\frac{4\lambda(3-2\lambda r^2)}{(3+2\lambda r^2)^2}\\
+   &\leq-8+\tfrac{10}{3}\lambda<0.
+ \end{split}
+ \label{eq:cm-single-fold-proof}
+\end{equation}
+Thus $F_x$ has a single maximum and vanishes at both endpoints. The residual
+$F-x$ consequently has at most one interior local maximum. For
+$\lambda\leq1/2$, the bound $F_x\leq\lambda(3+2\lambda)/2\leq1$ excludes
+positive roots. At $x=0.44,\lambda=1.3$, $F>x$: equivalently
+$e^{0.89232}>1.3587584/0.56$, already certified by the first five terms of
+the exponential series. Hence first contact occurs for
+$1/2<\lambda_c<1.3$, at the unique interior maximum, with $F_{xx}<0$.
+The residual is nonpositive elsewhere at criticality. Therefore
+$\ell(x,\lambda_c)=2\lambda_cx(x-F)$ is nonnegative, has exactly one
+positive zero, and has positive second derivative there. This verifies the
+global minimum hypothesis, rather than inferring it from a plot.
+
+For triangles use $u=e^{-z}$, $d=1+2\lambda u^2$, and
+$C=2u-1+2\lambda u^2$ in this derivative calculation. With $q_1,q_2$ from
+\cref{eq:triangle-scalar-messages},
+\begin{equation}
+ \begin{aligned}
+ q_{1,z}&=2uC/d^2,\qquad q_{2,z}=2u(1-u),\\
+ q_{1,zz}&=-\frac{2u(4u-1+6\lambda u^2)}{d^2}
+             +\frac{16\lambda u^3C}{d^3},\\
+ q_{2,zz}&=2u(2u-1),\\
+ H_{zz}&=\lambda(q_{1,zz}+q_{2,zz}).
+ \end{aligned}
+ \label{eq:triangle-fold-derivatives}
+\end{equation}
+For the density put $Q=\lambda(q_1+q_2)$ and $T=\lambda q_1$.
+The smooth extension away from the solution curve is
+$\mathcal R_\triangle=1-e^{-Q}(1+Q+T^2/2)$, giving
+\begin{equation}
+  \mathcal R_{\triangle,z}
+   =e^{-Q}[Q_z(Q+T^2/2)-TT_z].
+  \label{eq:triangle-density-derivative}
+\end{equation}
+Retaining $e^{-Q}$ when differentiating keeps this the original density
+map; $e^{-Q}=u$ is an identity only on $H=0$.
+At the critical solution, $H_\lambda\approx0.346630$,
+$H_{zz}\approx-0.702172$, and
+$\mathcal R_{\triangle,z}\approx0.280338$, all nonzero with the signs
+required by \cref{eq:fold-conditions}. These numerical checks verify a local
+nondegenerate fold of the stated equations. They do not prove a terminal-core limit for
+finite triangle graphs.
+
+For the random-degree CM specialization, if $\lambda_n\to\lambda_c>0$ then
+$K_i=2\operatorname{Poisson}(\lambda_n)$ has limiting probabilities
+\cref{eq:limiting-degree-law}, even total degree, and
+$\E[A^{K_i}]=\exp\{\lambda_n(A^2-1)\}<\infty$ for every fixed $A>1$.
+There is positive probability of degree greater than three.
+The empirical degree proportions converge in probability, and Markov's
+inequality gives $\sum_i A^{K_i}=O_p(n)$. These verify the random-degree
+moment assumptions in \cite[Condition~8.1]{janson2008fluctuations}.
+The unique nondegenerate minimum was verified above.
+The paper's Theorem~3.5 concerns a configuration multigraph with prescribed
+degrees. Section~8 formally states its random-degree extension for a graph
+uniform over simple graphs with the given degrees. Its conditioning argument
+applies directly to the prescribed-degree multigraph theorem as well; this
+is the extension used here. Uniform-simple conditioning is different from
+the erased control in our experiments.
+
+For completeness, the constants can be computed with elementary binomial
+moments. In the following expectations $K\sim2\operatorname{Poisson}(\lambda_c)$,
+$x=x_c$, and $Y\mid K\sim\operatorname{Bin}(K,x)$.
+Let $g(Y)=Y\mathbf1_{\{Y\geq3\}}$ and
+$h_k=\E[g(Y)\mid K=k]$. Then
+\begin{equation}
+ \begin{split}
+  v_{\mathrm{degree}}&=\Var(Kx^2-h_K),\\
+  v_{\mathrm{pair}}&=\E[\Var(g(Y)\mid K)]-2\mu x^2(1-x^2),\\
+  c&=\mu x\partial_\lambda F(x,\lambda_c),\qquad\mu=2\lambda_c.
+ \end{split}
+ \label{eq:cm-variance-constants}
+\end{equation}
+The second identity specializes the paper's pairing variance
+\cite[Eq.~(5.47)]{janson2008fluctuations}. Its unrestricted total-end variance
+is $\sigma_{WW}=2\mu x^2(1-x^2)$, and its heavy-end variance is
+$\sigma_{HH}=\E[\Var(g(Y)\mid K)]$.
+Composing binomial thinning and weighting the tail counts by $3,1,1,\ldots$
+reduces its Eq.~(5.40) to
+\begin{equation}
+ \sigma_{WH}=2x^3h'(x)\int_x^1t^{-3}\,dt
+             =x(1-x^2)h'(x),
+\end{equation}
+where $h(x)=\E[h_K(x)]$.
+At the fold, $h'(x)=2\mu x$, so $\sigma_{WH}=\sigma_{WW}$ and
+$\sigma_{LL}=\sigma_{WW}-2\sigma_{WH}+\sigma_{HH}$ reduces to
+\cref{eq:cm-variance-constants}. In that paper the symbol for mean graph degree
+is our $\mu$, not our membership parameter $\lambda$.
+
+For $k\geq3$, put $P_1=kx(1-x)^{k-1}$ and
+$P_2=\binom{k}{2}x^2(1-x)^{k-2}$. Then
+\begin{equation}
+ \begin{split}
+  h_k&=kx-P_1-2P_2,\\
+  \E[g(Y)^2\mid K=k]&=kx(1-x)+k^2x^2-P_1-4P_2.
+ \end{split}
+ \label{eq:cm-thinned-moments}
+\end{equation}
+Both moments are zero for $k<3$. Summing these expressions over Poisson
+memberships computes the variances without simulating either degrees or
+pairings. The resulting $c\approx0.305420$ and total variance
+$0.356978$ give \cref{eq:cm-noise-scale}.
+
+The elementary central limit theorem for independent degree contributions
+in \cref{eq:empirical-bottleneck} gives \cref{eq:degree-noise} at $x_c$.
+Its derivative there is $O_p(n^{-1/2})$, while its second derivative tends
+to $\beta>0$. Thus $\bar x_n-x_c=O_p(n^{-1/2})$ and replacing the empirical
+minimum by its value at $x_c$ changes its height by only $O_p(n^{-1})$.
+The empirical density at that minimizer differs from $\rho_c$ by
+$O_p(n^{-1/2})$, negligible on the $n^{-1/4}$ density scale.
+Conditional on the degrees, the pruning theorem supplies independent pairing
+noise. The normal contributions combine, and its density factor is
+$\mathcal R_{\mathrm{CM},x}\sqrt{2c/\beta}=a_{\mathrm{CM}}$, yielding
+\cref{eq:cm-critical-limit}. A fixed cutoff below $\rho_c$ is asymptotically
+equivalent to nonemptiness because surviving fractions concentrate at
+$\rho_c$ in this window.
+
+The planned shared-vector CM additionally conditions the total
+$L=\sum_iD_i$ on $L\equiv0\pmod3$. This changes finite distributions, but not these
+leading Gaussian constants. To see this, set $\omega=e^{2\pi i/3}$ and use
+$\mathbf1_{\{L\equiv0\}}=(1+\omega^L+\omega^{2L})/3$.
+For any finite vector $f(D)$ of the degree contributions needed above, the
+characteristic function of its centred sum has, after conditioning, three
+terms. The ordinary term gives its central limit theorem. In each remaining
+term, the single-observation factor has modulus tending to
+$|\E[\omega^{jD}]|=e^{-3\lambda_c/2}<1$, $j=1,2$; its $n$th power vanishes.
+The conditioning probability is
+\begin{equation}
+ \begin{split}
+  \Prob(L\equiv0\!\!\pmod3)
+    =\tfrac13[&1+2e^{-3n\lambda_n/2}\\
+      &\times\cos(\sqrt3n\lambda_n/2)]\longrightarrow\tfrac13.
+ \end{split}
+ \label{eq:divisibility-probability}
+\end{equation}
+Hence the same Gaussian degree limits hold, and the moment bounds survive
+conditioning on this event of probability bounded away from zero. Pairings
+remain uniform conditional on each vector. Repeated pairings of one fixed
+vector share its degree contribution $U$; their within-vector variation
+therefore contains only pairing noise. They are not independent samples
+from the full ensemble law in \cref{eq:cm-critical-limit}.
+
+Finally, the stochastic law in \cref{eq:stochastic-fold} has, for $r=1,2$,
+\begin{equation}
+  \E[Y^r]=\frac{a_M^r}{s\Phi(m/s)}
+       \int_0^\infty v^{r/2}\phi((v-m)/s)\,dv,
+  \label{eq:stochastic-moments}
+\end{equation}
+where $\phi$ is the standard normal density. Its variance is
+$\E[Y^2]-\E[Y]^2$, and the second moment simplifies to
+$a_M^2[m+s\phi(m/s)/\Phi(m/s)]$. Thus the predicted conditional spread is
+fixed by theory and the occurrence fit; it has no independent fit parameter.
+
+\subsection{Independent numerical checks}
 \label{app:numerical-checks}
-% Reserve detailed residual/tolerance tables, direct-iteration comparisons,
-% local triangle cases, and finite-projection counterexamples where useful.
-% Do not label probability-map iteration as a tested finite-graph
-% warning-propagation algorithm; that larger experiment is not implemented.
-\placeholder{[Supplementary solver checks and small illustrative cases.]}
+
+Notebooks 05 and 08 retain the shared equation solvers and add analytic
+partial derivatives and density coefficients. The deterministic comparison
+notebook evaluates them and generates the table, figure, and diagnostic CSVs.
+The bisection stopping tolerances are $10^{-15}$ for CM and
+$2\times10^{-15}$ for triangles, relative to the coordinate scale, with
+finite iteration limits and errors on failure.
+These are root-location tolerances, not error bounds on finite-graph predictions.
+
+For CM, centred differences use coordinate steps from $10^{-2}$ to
+$10^{-4}$; for triangles they use $10^{-3}$ to $10^{-5}$.
+They independently differentiate the residual and density, with additional
+second differences of the triangle residual itself. Agreement improves until
+subtraction roundoff becomes relevant. Checks at noncritical points also
+verify that the partial derivatives hold the correct argument fixed.
+Direct solutions at offsets down to $10^{-8}$ give density ratios
+$0.317987$ (CM) and $0.278590$ (triangles), approaching the respective
+coefficients in \cref{tab:critical-predictions}. The remainder divided by
+$\delta$ approaches approximately $0.2772$ and $0.3653$ over the resolved
+range, consistent with the stated $O(\delta)$ remainder.
+
+The CM variance calculation agrees using truncations at 40 and 60 Poisson
+memberships. Direct binomial probability sums independently check the moment
+identities in \cref{eq:cm-thinned-moments}. An additional 48-, 96-, and
+192-point Gaussian quadrature evaluation of the paper's unsimplified
+covariance integral agrees with $\sigma_{WH}=0.8014616885$ to within
+$6\times10^{-15}$. These are deterministic numerical cross-checks, not
+random-graph measurements. Fresh-kernel tests also retain the existing
+local triangle-rule, probability-sum, branch-selection, and pruning checks.
 
 \section{Experiment settings and sensitivity checks}
 \label{app:experiment-details}

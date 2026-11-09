@@ -8,7 +8,7 @@ LATEXMK_FLAGS ?= -pdf -interaction=nonstopmode -halt-on-error -file-line-error -
 # Without --output or --inplace, it saves no notebook copies or source outputs.
 EXECUTE_NOTEBOOK = $(UV) run --locked jupyter execute
 
-.PHONY: help setup sync run simulate figures theory comparison comparison-simulate \
+.PHONY: help setup sync run simulate figures theory theory-figures comparison comparison-simulate \
         comparison-figures triangle-theory triangle-refine triangle-figures \
         triangle-study report report-full report-clean smoke test lint format format-check check
 
@@ -19,6 +19,7 @@ help:
 	  'make simulate      Run the selected triangle-study stage and save its CSVs' \
 	  'make figures       Plot saved measurements for the selected study stage' \
 	  'make theory        Execute the configuration-model derivation and definitions' \
+	  'make theory-figures Verify both theories and regenerate the report table/figure' \
 	  'make comparison    Run the three-model comparison, then analyze saved CSVs' \
 	  'make comparison-simulate  Save matched-condition triangle and CM trials' \
 	  'make comparison-figures   Plot saved comparison data against CM theory' \
@@ -62,6 +63,11 @@ figures:
 theory:
 	$(EXECUTE_NOTEBOOK) notebooks/05_configuration_theory.ipynb --timeout=-1
 
+# Deterministic equation/derivative checks only: no random graphs or research CSVs.
+# Updates the selected paper assets and theory diagnostics under results/figures/.
+theory-figures:
+	$(EXECUTE_NOTEBOOK) notebooks/theory_comparison.ipynb --timeout=-1
+
 # Keep simulation and saved-data analysis ordered, including under make -j.
 # Existing trial CSVs are protected; use comparison-figures to analyze them again.
 comparison:
@@ -103,6 +109,7 @@ report:
 # fresh notebook output/data directories or explicitly enable overwrite first.
 # Figures are selected into report/figures/ deliberately when writing begins.
 report-full:
+	$(MAKE) theory-figures
 	$(MAKE) comparison
 	$(MAKE) triangle-study
 	$(MAKE) report

@@ -1,23 +1,79 @@
 \section{Introduction}
 \label{sec:introduction}
 
-% Main research question (keep consistent with ../docs/research_plan.md):
-% How do finite-size fluctuations affect the emergence and size of the 3-core
-% in Poisson triangle-community graphs, and to what extent can a stochastic
-% saddle-node approximation predict these fluctuations compared with a
-% degree-matched configuration model?
-%
-% Motivate substantial-core emergence and the mixture of outcomes near a
-% discontinuous transition. The main aim is to understand finite-size behaviour;
-% the stochastic approximation is a testable hypothesis whose failure is useful.
-% Link three aspects of the same experiment: survival/window width, conditional
-% core-density fluctuations, and prediction of those distributions from survival.
-% State the n^(-1/2) and n^(-1/4) scales as questions, not assumed conclusions.
-% Position the work against CM core/fluctuation theorems (Janson--Luczak),
-% community-graph local limits, and motif-aware calculations in other ensembles.
-% Distinguish established results, our cavity approximation, and new numerical
-% evidence; do not claim a new universality class or a triangle fluctuation proof.
-% Scope: pure triangles and CM controls. Full finite-graph warning propagation
-% and larger-clique mixtures remain optional extensions, not promised results.
-% End with the paper's theory -> methods -> evidence progression.
-\placeholder{[Finite-size research question, motivation, and scope.]}
+Repeatedly removing vertices with fewer than three neighbours can empty a
+simple graph or leave a substantial part of it intact. Each removal can leave
+other vertices with too few neighbours and trigger further deletions. The
+subgraph left when no more vertices can be removed is the 3-core: the largest
+part of the graph in which every vertex has at least three neighbours within
+that part. Replacing three by $k$ defines the $k$-core. In classical random
+graph models, adding connections can make a substantial 3-core appear
+abruptly. As the number of vertices grows, the surviving fraction can jump from
+zero to a positive value at a critical density~\cite{janson2007kcore}.
+This is a discontinuous transition.
+
+The deletion process depends on how neighbours are connected to one another.
+Triangles link neighbours to each other, creating local clustering.
+Removing one of these neighbours removes a connection from the other
+too~\cite{gleeson2009clustered,bhat2017clustered}.
+An isolated triangle nevertheless has no 3-core, since each vertex has only
+two neighbours. We therefore study graphs of overlapping triangles, each
+treated as a community. Each vertex's membership count is drawn from a
+Poisson distribution~\cite{hofstad2021communities}.
+Increasing this distribution's mean adds connections on average.
+
+To compare graphs with similar numbers of connections per vertex, we use a
+configuration model. It assigns each vertex a number of edge ends, its degree,
+and joins these ends in random pairs. We choose the degrees so that, as the
+graphs grow, the proportions of vertices at each degree agree with those in
+the triangle model. This matches the limiting degree distribution while
+allowing a different arrangement of connections. The finite graphs need not
+have identical degrees.
+
+At the same parameter value near the transition, some finite graphs may lose
+almost all their vertices while others retain a substantial core.
+An average combines these outcomes, so we measure separately how often a
+substantial core survives and how its size varies among the graphs that retain
+one. The second measurement is the conditional core-size distribution.
+The parameter interval
+over which survival changes from unlikely to likely is the critical window.
+Configuration-model theorems describe such finite-size variability under
+stated assumptions~\cite{janson2008fluctuations}.
+
+To relate these two measurements, we start from equations that predict the
+fraction of vertices left after pruning. For triangles, the equations handle
+the two linked neighbours together and treat the numbers of remaining
+neighbours from different communities as independent. Their prediction for the final core
+remains an approximation. At the predicted threshold, two nonzero solutions
+of the equations meet at a turning point, called a saddle-node. Just above this
+point, the predicted surviving fraction increases from its positive threshold
+value like the square root of the distance from the threshold.
+We test whether small random shifts of this
+threshold can explain the variation between graphs. Our main research question
+is therefore:
+
+\medskip
+\begin{quote}
+\raggedright\itshape
+How do finite-size fluctuations affect the emergence and size of the
+3-core in Poisson triangle-community graphs, and to what extent can a stochastic
+saddle-node approximation predict these fluctuations compared with a
+degree-matched configuration model?
+\end{quote}
+\medskip
+
+For graphs with $n$ vertices, we ask whether the window narrows like $n^{-1/2}$
+and the spread of surviving fractions, conditional on a substantial core,
+decreases like $n^{-1/4}$. The square-root response connects these two proposed
+scales, which remain hypotheses for triangle graphs. The fraction at the
+threshold and the coefficient in the square-root relation come from the equations.
+We estimate the parameters of the random shift using only how often a
+substantial core survives. Sizes from independent simulations then test the
+predicted distribution, without fitting its location, amplitude, or spread to
+those sizes.
+
+The paper focuses on triangle communities and this degree-matched benchmark.
+After defining the models and their theoretical predictions, we describe the
+simulations and uncertainty estimates. We then examine survival and conditional
+size distributions together, and discuss what the approximation explains and
+which differences remain.

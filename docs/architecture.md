@@ -6,8 +6,9 @@ Each notebook combines its mathematical purpose with the relevant implementation
 There is no separate Python package: shared definitions are loaded directly from
 their notebook with IPython's `%run`.
 
-This guide describes the implemented baseline. The agreed finite-size research
-question, planned controls, and proposed notebook extensions are in
+This guide describes the implemented baseline and verified theory. The agreed
+finite-size research question, planned controls, and proposed notebook extensions
+are in
 [research_plan.md](research_plan.md).
 
 ## Notebook responsibilities and execution
@@ -25,8 +26,12 @@ question, planned controls, and proposed notebook extensions are in
    examines variation near the transition, and saves figures and summary tables.
    It does not load graph classes or rerun simulations.
 5. **`05_configuration_theory.ipynb`** derives the configuration-model support
-   equation and limiting core density, then defines numerical prediction
-   functions. Loading it does not run experiments or save files.
+   equation, limiting core density, critical fold, and density square-root
+   coefficient. It also evaluates the matching and random-degree fluctuation
+   constants and conditional CDFs/quantiles through explicitly called functions;
+   the stochastic helpers take supplied parameters and perform no fitting.
+   Loading it does not run
+   experiments, evaluate checks, plot, or save files.
 6. **`06_configuration_simulation.ipynb`** loads 02 and 05, samples triangle and
    configuration graphs under common settings, measures cores and graph
    diagnostics, and saves one comparison CSV per graph size.
@@ -35,14 +40,26 @@ question, planned controls, and proposed notebook extensions are in
    saves figures, summaries, and numerical theory values. It never loads 06.
 8. **`08_triangle_cavity.ipynb`** derives joint support within a triangle,
    closes the message probabilities using independent incidence-tree branches,
-   and defines maximal fixed-point and critical-point solvers. It only defines
-   functions and imports dependencies.
+   and defines maximal fixed-point, critical-point, and density-fold calculations
+   with independent derivative and branch checks. It only defines functions and
+   imports dependencies.
 9. **`09_triangle_refinement.ipynb`** loads the graph algorithms and adds
    independent seeded triangle trials near the predicted critical point,
    and writes a separate protected CSV per size. It does not rerun 06.
 10. **`10_triangle_comparison.ipynb`** loads 05 and 08, reads the existing 06
     measurements and additional 09 trials, and produces the final validation
     and model comparison. It never loads graph generation.
+
+**`theory_comparison.ipynb`** loads only 05 and 08 and explicitly evaluates
+the deterministic comparison. It checks derivatives, density expansions, the CM
+covariance formula and Poisson truncations, then exports the theory table and
+near-critical figure. `make theory-figures` runs it without generating graphs or
+reading simulation measurements. Paper assets go to
+`report/tables/theory_critical_values.tex` and
+`report/figures/theory_fold_comparison.pdf`; CSV checks and a preview stay under
+`results/figures/theory/`. The output paths and plotting range are configured in
+this notebook's parameters cell. These named deterministic products can be
+regenerated; protected simulation measurements are untouched.
 
 Notebooks 01, 02, 05, and 08 contain imports and definitions only: `%run` makes their
 classes and functions available in the calling notebook without starting an
@@ -221,6 +238,18 @@ compare supercritical roots with repeated pruning from full support. No
 configuration-model formula is used as a theoretical prediction for the triangle
 graph.
 
+Notebook 05 derives the density expansion
+`rho(lambda) = rho_c + a * sqrt(lambda - lambda_c) + O(lambda - lambda_c)`,
+with `a = 0.31795904886` for the CM. The unique nondegenerate critical minimum
+is justified analytically. The random-degree fluctuation specialization includes
+both pairing variance and empirical-degree variance, giving an effective
+membership-parameter standard deviation `tau_CM = 1.95624882829`.
+Notebook 05 evaluates these constants from binomial moments and Poisson sums;
+the explicit comparison checks the original covariance integral independently.
+The mathematical assumptions and modulo-three degree-conditioning argument are
+documented in Chapter 3 and Appendix A. These CM constants do not automatically
+describe the erased control or the triangle ensemble.
+
 ## Triangle cavity prediction
 
 The simple graph is made from triangle communities. Its incidence graph has a
@@ -244,6 +273,13 @@ upper-branch calculations, avoiding arbitrarily slow fixed-point convergence
 near a tangency. The full two-dimensional iteration remains available as an
 independent numerical check. The critical core fraction is the positive
 branch's limiting value, with the same finite-size caution as the CM prediction.
+
+Notebook 08 now derives the density-fold coefficient
+`a = 0.27855297716` from analytic message and density derivatives, checked against
+finite differences and direct upper-branch solutions. The triangle fold's global
+branch shape remains numerically checked, rather than an analytic uniqueness
+theorem. Its deterministic expansion does not prove a terminal-core law or the
+proposed finite-size fluctuation distribution.
 
 The local equations are exact on the limiting triangle factor tree. Predicting
 the terminal core of this finite simple-graph ensemble also requires passing
@@ -329,5 +365,9 @@ what the finite-size evidence suggests and what remains uncertain.
 
 Generated CSVs live under `results/runs/` and exploratory figures under
 `results/figures/`, alongside analysis summary CSVs; both are ignored by Git.
-Selected report figures and future
-LaTeX source belong in `report/`.
+Selected report figures and LaTeX source belong in `report/`. Chapters 1–3 and
+the supporting theory Appendix A are written. The numerical methodology,
+finite-size results, discussion, conclusion, and experiment Appendix B remain
+writing roadmaps. Future notebooks 11/12 for occurrence fitting, paired-vector
+pilots, and held-out size validation are proposed in the research plan; they
+have not been implemented, and the theory work runs no random-graph campaign.
