@@ -5,7 +5,9 @@ UV ?= uv
 # Without --output or --inplace, it saves no notebook copies or source outputs.
 EXECUTE_NOTEBOOK = $(UV) run --locked jupyter execute
 
-.PHONY: help setup sync run simulate figures smoke test lint format format-check check
+.PHONY: help setup sync run simulate figures theory comparison comparison-simulate \
+        comparison-figures triangle-theory triangle-refine triangle-figures \
+        triangle-study smoke test lint format format-check check
 
 help:
 	@printf '%s\n' \
@@ -13,12 +15,23 @@ help:
 	  'make run           Execute simulation, then analysis notebooks' \
 	  'make simulate      Run the selected triangle-study stage and save its CSVs' \
 	  'make figures       Plot saved measurements for the selected study stage' \
+	  'make theory        Execute the configuration-model derivation and definitions' \
+	  'make comparison    Run the three-model comparison, then analyze saved CSVs' \
+	  'make comparison-simulate  Save matched-condition triangle and CM trials' \
+	  'make comparison-figures   Plot saved comparison data against CM theory' \
+	  'make triangle-theory     Execute the triangle cavity derivation and definitions' \
+	  'make triangle-refine     Save additional triangle trials near the predicted transition' \
+	  'make triangle-figures    Compare both theories with saved comparison/refinement data' \
+	  'make triangle-study     Run targeted refinement, then the final comparison' \
 	  'make check         Check formatting, lint, and fresh-kernel notebook tests' \
 	  'make smoke         Check the small simulation/analysis notebook workflow' \
 	  'make format        Format notebook code cells and test code' \
 	  '' \
 	  'Edit the settings cells in notebooks/03 and notebooks/04 before running.' \
 	  'Select the same study stage in both notebooks; existing trials are protected.' \
+	  'For the configuration comparison, edit notebooks/06 and notebooks/07 instead.' \
+	  'The comparison default includes larger runs; use smaller settings for a pilot.' \
+	  'For the triangle cavity study, edit notebooks/09 and notebooks/10.' \
 	  'Only CSV measurements, analysis summaries, and figures are saved under results/.'
 
 setup sync:
@@ -36,6 +49,41 @@ simulate:
 # directing the developer to run make simulate. Plotting never launches a sweep.
 figures:
 	$(EXECUTE_NOTEBOOK) notebooks/04_triangle_analysis.ipynb --timeout=-1
+
+# The theory notebook defines the numerical predictions without generating data.
+theory:
+	$(EXECUTE_NOTEBOOK) notebooks/05_configuration_theory.ipynb --timeout=-1
+
+# Keep simulation and saved-data analysis ordered, including under make -j.
+# Existing trial CSVs are protected; use comparison-figures to analyze them again.
+comparison:
+	$(MAKE) comparison-simulate
+	$(MAKE) comparison-figures
+
+comparison-simulate:
+	$(EXECUTE_NOTEBOOK) notebooks/06_configuration_simulation.ipynb --timeout=-1
+
+comparison-figures:
+	$(EXECUTE_NOTEBOOK) notebooks/07_configuration_analysis.ipynb --timeout=-1
+
+# Triangle theory retains correlations inside each triangle; this defines its
+# numerical functions without generating graphs or writing results.
+triangle-theory:
+	$(EXECUTE_NOTEBOOK) notebooks/08_triangle_cavity.ipynb --timeout=-1
+
+# Reuse the broad comparison data from 06. Only missing transition resolution
+# needs a new simulation: 09 writes a separate, protected triangle dataset.
+triangle-refine:
+	$(EXECUTE_NOTEBOOK) notebooks/09_triangle_refinement.ipynb --timeout=-1
+
+# Reading saved 06 and 09 measurements never starts a simulation.
+triangle-figures:
+	$(EXECUTE_NOTEBOOK) notebooks/10_triangle_comparison.ipynb --timeout=-1
+
+# Keep these dependent steps ordered even when invoked with make -j.
+triangle-study:
+	$(MAKE) triangle-refine
+	$(MAKE) triangle-figures
 
 smoke:
 	$(UV) run --locked pytest -q tests/test_notebooks.py::test_simulation_and_analysis_fresh_kernels
