@@ -1,9 +1,9 @@
 # Research direction and next phase
 
-This is the agreed scientific plan. The introduction, model definitions,
-theoretical analysis, and supporting Appendix A are written. The remaining
-report sections are writing roadmaps; the additional finite-size experiments
-below are **planned, not implemented**.
+This is the agreed scientific plan. The introduction is written; all later
+report sections and appendices have been cleared for rewriting, with their
+headings and labels retained. The notebook implementations are unchanged.
+The additional finite-size experiments below are **planned, not implemented**.
 
 ## Research question
 
@@ -83,9 +83,10 @@ The CM fluctuation theorem is specialized to this random twice-Poisson degree
 family, using its nondegenerate minimum and exponential moments. Both independent
 degree sampling and edge pairing contribute to the residual variance. Their
 combined effective parameter SD is $\tau_{\mathrm{CM}}=1.956248828$; this is a
-theorem-based benchmark, not a fitted triangle constant. Appendix A also shows
-that conditioning the membership sum modulo three does not change the leading
-empirical-degree central limit law. Finite conditioned and unconditioned
+theorem-based benchmark, not a fitted triangle constant. The explanation of why
+conditioning the membership sum modulo three does not change the leading
+empirical-degree central limit law needs to be rewritten in Appendix A.
+Finite conditioned and unconditioned
 ensembles still differ, and same-vector matching controls require separate
 statistical analysis. These results do not transfer automatically to the erased
 CM or to triangles. Local weak convergence does not justify exchanging the
@@ -137,7 +138,7 @@ remains a cavity assumption.
 
 | Component | Existing evidence and planned extension |
 | --- | --- |
-| Theory: 05 and 08 | Fixed points, maximal branches, critical points, both density-fold amplitudes and independent numerical checks are complete. The CM fluctuation specialization includes degree and pairing noise; the modulo-three conditioning argument is in Appendix A. Triangle terminal-core and fluctuation claims retain their stated assumptions. |
+| Theory: 05 and 08 | Fixed points, maximal branches, critical points, both density-fold amplitudes and independent numerical checks are complete. The CM fluctuation specialization includes degree and pairing noise; the report's modulo-three conditioning argument needs to be rewritten in Appendix A. Triangle terminal-core and fluctuation claims retain their stated assumptions. |
 | Deterministic comparison | `theory_comparison.ipynb` explicitly evaluates derivative, branch and original covariance checks, and regenerates the paper table/figure with `make theory-figures`; no random graphs or simulation measurements are used. |
 | Stochastic prediction helpers: 05 | Conditional CDF and quantile functions evaluate the proposed law for supplied amplitude, centre and width. They do not fit survival data or validate conditional sizes. |
 | Sampling and peeling: 02, 06, 09 | Reproducible generation, pruning, parallel trials and protected CSV output exist. Notebook 02 already accepts a fixed-count sampler for triangles and an explicit degree vector for CM; add paired/repeated-vector orchestration, IDs and checks rather than a new graph algorithm. |

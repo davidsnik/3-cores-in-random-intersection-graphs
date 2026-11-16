@@ -246,8 +246,9 @@ both pairing variance and empirical-degree variance, giving an effective
 membership-parameter standard deviation `tau_CM = 1.95624882829`.
 Notebook 05 evaluates these constants from binomial moments and Poisson sums;
 the explicit comparison checks the original covariance integral independently.
-The mathematical assumptions and modulo-three degree-conditioning argument are
-documented in Chapter 3 and Appendix A. These CM constants do not automatically
+The mathematical assumptions and modulo-three degree-conditioning argument
+belong in Section 3 and Appendix A, which are currently empty outlines for
+rewriting. These CM constants do not automatically
 describe the erased control or the triangle ensemble.
 
 ## Triangle cavity prediction
@@ -365,9 +366,9 @@ what the finite-size evidence suggests and what remains uncertain.
 
 Generated CSVs live under `results/runs/` and exploratory figures under
 `results/figures/`, alongside analysis summary CSVs; both are ignored by Git.
-Selected report figures and LaTeX source belong in `report/`. Chapters 1–3 and
-the supporting theory Appendix A are written. The numerical methodology,
-finite-size results, discussion, conclusion, and experiment Appendix B remain
-writing roadmaps. Future notebooks 11/12 for occurrence fitting, paired-vector
+Selected report figures and LaTeX source belong in `report/`. The introduction
+is written; all later sections and appendices retain only their headings and
+labels for rewriting. Existing figure and table sources are retained for reuse.
+Future notebooks 11/12 for occurrence fitting, paired-vector
 pilots, and held-out size validation are proposed in the research plan; they
 have not been implemented, and the theory work runs no random-graph campaign.

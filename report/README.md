@@ -3,13 +3,15 @@
 The report uses the same `IEEEtran` conference style as the supplied
 `GLA_Software` project: `10pt,conference,compsoc`, with the class's fonts,
 two-column layout, headings, title block, and captions. It uses the class's
-default US Letter paper size. One author and an abstract placeholder are prepared.
-The introduction, Sections 2–3 (models and theoretical predictions), and
-Appendix A are written; the remaining sections contain writing prompts.
+default US Letter paper size. The title block includes the single author's
+details and course information; the abstract remains a placeholder.
+The introduction is written. All later sections and appendices have been cleared
+for rewriting, retaining only their headings and labels.
 
-The compact space below the title and around figures follows the reference
-project. The abstract and mathematical environments support this report's needs;
-the bibliography uses IEEEtran's standard two-column placement.
+The compact spacing around figures follows the reference project.
+The abstract spans both columns beneath the author information, using
+IEEEtran's title-area hook in `main.tex`. The main text and bibliography use
+the standard two-column layout.
 Body paragraphs have no first-line indentation and are separated by a
 half-line gap, configured centrally in `preamble.tex`.
 
@@ -91,9 +93,10 @@ are supported; PDF is useful for future vector exports from Matplotlib.
 
 The two model illustrations are deterministic TikZ sources:
 `figures/core_pruning.tex` and `figures/triangle_construction.tex`. Their vertices,
-edges, and membership groups are specified directly, so `make report` regenerates
-them without Python or simulation data. TikZ (the TeX `pgf` package) is required.
-Both captions explicitly identify them as illustrative constructions.
+edges, and membership groups are specified directly. These sources are retained
+for reuse but are not included in the empty section outlines. When included,
+LaTeX renders them without Python or simulation data; TikZ (the TeX `pgf` package)
+is required. Identify them as illustrative constructions in their captions.
 
 `notebooks/theory_comparison.ipynb` generates
 `tables/theory_critical_values.tex` and `figures/theory_fold_comparison.pdf`
@@ -102,19 +105,26 @@ from the shared equations in 05 and 08. Regenerate them with
 The command also saves full-precision values, independent derivative/branch
 checks, and the original covariance-integral check under
 `results/figures/theory/`. Keep the selected table and figure with the report
-source so `make report` can build them without executing notebooks.
+source so the paper can include them without executing notebooks. The current
+section outlines do not include these assets.
 
 ## Writing conventions
 
+Read [the scientific writing guide](../docs/writing.md) before drafting or
+revising prose. It records the agreed voice, narrative approach, mathematical
+exposition, use of evidence, and editorial checks. This guide covers section
+roles, source material, and LaTeX conventions.
+
 The report follows the scientific questions rather than the order of notebook
-execution. The introduction, model definitions, theoretical predictions, and
-Appendix A contain cited prose and verified calculations. The later sections
-remain writing prompts. Experimental finite-size conclusions have not been
-drafted.
+execution. Only the introduction currently contains prose. The other sections
+and both appendices are empty outlines; their earlier prose, equations, figure
+and table inclusions, placeholders, and writing prompts have been removed.
+Notebook calculations, saved results, bibliography entries, and figure/table
+source assets remain available for the rewrite.
 
 | Section | Intended role | Notebook sources |
 | --- | --- | --- |
-| 1. Introduction | Finite-size question, three linked aims, literature, and scope | Assignment and cited literature |
+| 1. Introduction | Finite-size question, three linked aims, literature, and scope | Research plan and cited literature |
 | 2. Graph models and core observables | 3-core and size; Poisson triangle communities; degree-matched CM | 02, 05, 06, 08 |
 | 3. Critical behavior and finite-size predictions | CM equations/theorems; joint triangle cavity equations; saddle-node/density expansion; window/fluctuation scales; stochastic conditional law | 05, 08, theory_comparison, and primary literature; verified density amplitudes and CM specialization |
 | 4. Numerical methodology | Sampling/pruning/verification; scaled grids and controls; survival calibration/validation; distributions/uncertainty/sensitivity | Existing 02/05/06/08/09/10 patterns; new finite-size study planned |
@@ -131,8 +141,8 @@ to the paper; it does not prescribe new experiments through the build commands.
 Definitions come before support equations; the equations supply critical
 densities and fold coefficients; those quantities define the independent
 finite-size prediction tested by the numerical methodology. Results follow
-the same three questions for both models. Comments in the remaining `.tex` roadmaps reserve
-experimental figures, tables, and comparisons. Essential assumptions and
+the same three questions for both models. Use the intended roles above when
+rewriting the empty `.tex` outlines. Essential assumptions and
 calibration rules belong in the main paper, with longer details in appendices.
 The former computational-methods and experimental-design files are merged into
 `sections/numerical_methodology.tex`.
@@ -160,8 +170,8 @@ When filling the outline, preserve these distinctions:
   not completed results promised by this outline.
 
 Edit front matter in `main.tex` and write prose in the relevant section file.
-The title, author, affiliation, and email are placeholders; the PDF title and
-author metadata are set alongside them. Keep both consistent when filling them in.
+The title, author details, and course information are set alongside the PDF
+metadata. Keep the visible front matter and metadata consistent when editing them.
 Keep shared commands in `preamble.tex`; equations use IEEEtran's continuous
 numbering. The class supplies the title layout through `\IEEEauthorblockN` and
 `\IEEEauthorblockA`. Use `\appendices` before multiple appendix sections.
@@ -197,6 +207,6 @@ style numbers references in citation order. Links are clickable without visible
 colours or borders, matching the reference project. The initial five verified
 sources cover CM core/fluctuation results, the community-graph framework, and
 motif-aware calculations in other ensembles. These sources are cited at the
-relevant claims in the introduction and model definitions; add further citations
+relevant claims in the introduction; add further citations
 where later sections need them. Bibliography inclusion alone is not evidence that a theorem applies
-to our triangle model.
+to the triangle RIG.

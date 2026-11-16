@@ -224,12 +224,10 @@ the proposed finite-size calibration/validation pilot.
 
 See [report/README.md](../report/README.md) for mathematical environments,
 references, citations, and one- or two-column figures and tables. The report
-contains a cited introduction, complete model definitions with explanatory
-schematics, and Chapter 3 with verified critical-point calculations and finite-size
-predictions. Appendix A records derivative formulas, CM theorem assumptions,
-variance calculations, and numerical checks. The remaining
-sections contain headings, writing prompts, and source comments. Cite sources
-at the relevant claims as these sections are developed.
+contains a cited introduction. All later sections and appendices have been
+cleared for rewriting, retaining their headings and labels. The notebooks,
+bibliography, and existing figure and table sources remain available. Cite
+sources at the relevant claims as these sections are developed.
 
 ## Rebuilding the theoretical results
 

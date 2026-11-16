@@ -5,28 +5,39 @@
 \documentclass[10pt,conference,compsoc]{IEEEtran}
 \input{preamble}
 
-% Replace these placeholders with the title and the single author's details.
+% Title, single-author details, and course information.
 % IEEEtran supplies the title and author formatting.
 \title{On Finite-Size Fluctuations at the 3-Core Transition in Clustered Random Graphs}
 \author{%
-  \IEEEauthorblockN{[Author name]}
-  \IEEEauthorblockA{[Affiliation]\\
-    {[Email address]}}
+  \IEEEauthorblockN{D.~Snik (6018769)}
+  % Shorter affiliation lines keep the block balanced beneath the author's name.
+  \IEEEauthorblockA{\small Delft University of Technology\\
+    Faculty of Electrical Engineering,\\
+    Mathematics and Computer Science\\[0.4em]
+    \upshape WI4465 - Advanced Topics in Probability\\
+    \href{mailto:D.Snik@student.tudelft.nl}{D.Snik@student.tudelft.nl}}
 }
 \date{}
-\hypersetup{pdftitle={[Report title]},pdfauthor={[Author name]}}
+% Keep PDF metadata consistent with the visible title and author block.
+\hypersetup{
+  pdftitle={On Finite-Size Fluctuations at the 3-Core Transition in Clustered Random Graphs},
+  pdfauthor={D. Snik},
+  pdfsubject={WI4465 - Advanced Topics in Probability}
+}
 
 \begin{document}
 
-% Standard IEEE conference title block and first-column abstract.
+% Include the abstract in the full-width title area, above the two-column body.
+\IEEEaftertitletext{%
+  \begin{abstract}
+    % Write this last: question, methods, principal evidence, and limitations.
+    % Do not promise agreement with the stochastic approximation before testing it.
+    \placeholder{[Abstract text.]}
+  \end{abstract}
+  % Separate the full-width abstract from the two-column body below it.
+  \vspace{\baselineskip}
+}
 \maketitle
-% Match the compact space below the title in the GLA_Software reference.
-\vspace{-1.5em}
-\begin{abstract}
-  % Write this last: question, methods, principal evidence, and limitations.
-  % Do not promise agreement with the stochastic approximation before testing it.
-  \placeholder{[Abstract text.]}
-\end{abstract}
 
 \input{sections/introduction}
 \input{sections/models_and_observables}

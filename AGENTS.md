@@ -40,11 +40,26 @@ careful account of its failure is a useful scientific result.
   analytic global uniqueness theorem for the triangle fold is claimed.
 - The report has seven main sections: motivation; models; critical predictions;
   numerical methodology; results by question; discussion; conclusion. Preserve
-  the single-author IEEEtran style. The introduction, graph models, theoretical
-  analysis, and supporting Appendix A are written; numerical methodology,
-  results, discussion, conclusion, and experiment Appendix B remain roadmaps.
+  the single-author IEEEtran style. The introduction is written. All later
+  sections and appendices have been cleared for rewriting, retaining their
+  section/subsection headings and labels. The notebooks and research results
+  are unchanged by this reset.
   Keep hypotheses separate from findings as the report is developed.
   See [report/README.md](report/README.md).
+
+## Scientific writing
+
+Before drafting or revising paper prose, read
+[docs/writing.md](docs/writing.md). It records the agreed voice, level of
+explanation, treatment of mathematical claims, and revision workflow. Apply its
+clarity and exposition principles to notebook explanations as well, while keeping
+their useful implementation detail. Review the surrounding text and supporting
+evidence before editing; preserve passages outside the requested scope.
+
+The writing guide governs exposition, [docs/research_plan.md](docs/research_plan.md)
+records scientific scope and actual progress, and
+[report/README.md](report/README.md) maps sections to sources and documents LaTeX
+conventions. Keep these roles separate rather than duplicating their guidance.
 
 ## Start here
 

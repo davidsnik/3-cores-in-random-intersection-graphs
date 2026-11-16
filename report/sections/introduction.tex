@@ -1,79 +1,75 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Repeatedly removing vertices with fewer than three neighbours can empty a
-simple graph or leave a substantial part of it intact. Each removal can leave
-other vertices with too few neighbours and trigger further deletions. The
-subgraph left when no more vertices can be removed is the 3-core: the largest
-part of the graph in which every vertex has at least three neighbours within
-that part. Replacing three by $k$ defines the $k$-core. In classical random
-graph models, adding connections can make a substantial 3-core appear
-abruptly. As the number of vertices grows, the surviving fraction can jump from
-zero to a positive value at a critical density~\cite{janson2007kcore}.
-This is a discontinuous transition.
+The $k$-core of a graph is its largest induced subgraph in which every vertex
+has degree at least $k$ within that subgraph. This work focuses on the
+$3$-core because, in classical random graph models, increasing connectivity
+can cause it to appear abruptly. In the large-graph limit, the proportion of
+all vertices belonging to the core, called the core fraction, can jump from
+zero to a positive value~\cite{janson2007kcore}. Near this transition,
+finite graphs of the same size and generated at the same parameter value may
+contain almost no core or retain a substantial fraction of their vertices.
 
-The deletion process depends on how neighbours are connected to one another.
-Triangles link neighbours to each other, creating local clustering.
-Removing one of these neighbours removes a connection from the other
-too~\cite{gleeson2009clustered,bhat2017clustered}.
-An isolated triangle nevertheless has no 3-core, since each vertex has only
-two neighbours. We therefore study graphs of overlapping triangles, each
-treated as a community. Each vertex's membership count is drawn from a
-Poisson distribution~\cite{hofstad2021communities}.
-Increasing this distribution's mean adds connections on average.
+This work studies how this fraction varies between finite random
+intersection graphs (RIGs) built from overlapping triangle communities.
+The aim is to understand and predict both how often a substantial $3$-core
+appears near the transition
+and how its fraction varies among the graphs that retain one. Here, survival
+means that the core fraction reaches a fixed positive cutoff, which
+distinguishes substantial cores from small nonempty ones.
 
-To compare graphs with similar numbers of connections per vertex, we use a
-configuration model. It assigns each vertex a number of edge ends, its degree,
-and joins these ends in random pairs. We choose the degrees so that, as the
-graphs grow, the proportions of vertices at each degree agree with those in
-the triangle model. This matches the limiting degree distribution while
-allowing a different arrangement of connections. The finite graphs need not
-have identical degrees.
+In the Poisson triangle RIG studied in this work, each individual receives
+a Poisson number of community memberships, which are randomly grouped in threes.
+Individuals sharing a community are connected, so these groups usually form
+triangles, with overlaps where individuals belong to several communities
+\cite{hofstad2021communities}. Thus, the Poisson parameter controls average
+connectivity in this model. The edges between neighbours create local clustering
+and allow the neighbours to support each other during core pruning. Whether one
+remains in the $3$-core can therefore depend on whether the other remains
+\cite{gleeson2009clustered,bhat2017clustered}.
 
-At the same parameter value near the transition, some finite graphs may lose
-almost all their vertices while others retain a substantial core.
-An average combines these outcomes, so we measure separately how often a
-substantial core survives and how its size varies among the graphs that retain
-one. The second measurement is the conditional core-size distribution.
-The parameter interval
-over which survival changes from unlikely to likely is the critical window.
-Configuration-model theorems describe such finite-size variability under
-stated assumptions~\cite{janson2008fluctuations}.
+For comparison, a second graph model, the configuration model (CM), is also
+studied. Its degrees are chosen to match the RIG's limiting degree
+distribution, and edges are formed by randomly pairing the corresponding
+edge ends. Connections are therefore formed without organizing vertices
+into triangle communities. Although degrees in individual finite graphs
+need not coincide, the common limiting distribution allows the comparison
+to examine how arranging connections into communities affects core emergence
+and size beyond what
+the limiting degree distribution explains. These effects include several
+dependencies introduced by communities and cannot be attributed to
+clustering alone. Established theory also describes the CM's core fluctuations
+near the transition~\cite{janson2008fluctuations}. This provides a starting
+point for investigating whether a similar description applies to the
+triangle RIG.
 
-To relate these two measurements, we start from equations that predict the
-fraction of vertices left after pruning. For triangles, the equations handle
-the two linked neighbours together and treat the numbers of remaining
-neighbours from different communities as independent. Their prediction for the final core
-remains an approximation. At the predicted threshold, two nonzero solutions
-of the equations meet at a turning point, called a saddle-node. Just above this
-point, the predicted surviving fraction increases from its positive threshold
-value like the square root of the distance from the threshold.
-We test whether small random shifts of this
-threshold can explain the variation between graphs. Our main research question
-is therefore:
+Motivated by these results, this work investigates an approximation for
+how often a substantial $3$-core appears in finite graphs near the
+transition and how its fraction is distributed among graphs that retain
+one. The approximation represents differences between graphs by treating
+each graph as if it had a slightly different connectivity threshold for
+core survival~\cite{janson2008fluctuations}. A substantial core is predicted
+when connectivity exceeds this threshold, and its predicted fraction
+depends on how far above the threshold the connectivity lies. The
+approximation is constructed separately for the RIG and CM, using each
+model's theoretical relation between connectivity and core fraction.
+The numerical study examines how the survival probability and the
+distribution of core fractions among surviving graphs change with graph
+size. The central aim of this numerical study is testing
+whether theory and observations of how often
+cores survive are sufficient to predict that distribution in an
+independent set of simulations. Comparing the approximation's accuracy
+for the two models assesses how well the description supported by CM
+theory extends to the triangle RIG.
 
-\medskip
-\begin{quote}
-\raggedright\itshape
-How do finite-size fluctuations affect the emergence and size of the
-3-core in Poisson triangle-community graphs, and to what extent can a stochastic
-saddle-node approximation predict these fluctuations compared with a
-degree-matched configuration model?
-\end{quote}
-\medskip
-
-For graphs with $n$ vertices, we ask whether the window narrows like $n^{-1/2}$
-and the spread of surviving fractions, conditional on a substantial core,
-decreases like $n^{-1/4}$. The square-root response connects these two proposed
-scales, which remain hypotheses for triangle graphs. The fraction at the
-threshold and the coefficient in the square-root relation come from the equations.
-We estimate the parameters of the random shift using only how often a
-substantial core survives. Sizes from independent simulations then test the
-predicted distribution, without fitting its location, amplitude, or spread to
-those sizes.
-
-The paper focuses on triangle communities and this degree-matched benchmark.
-After defining the models and their theoretical predictions, we describe the
-simulations and uncertainty estimates. We then examine survival and conditional
-size distributions together, and discuss what the approximation explains and
-which differences remain.
+\Cref{sec:models-and-observables} defines the two graph models and the
+measures of core survival and size. \Cref{sec:theoretical-predictions}
+develops the theoretical predictions for the transitions and finite-size
+fluctuations. \Cref{sec:numerical-methodology} explains the simulation
+design and how the predictions are evaluated, followed by the results and
+model comparisons in \cref{sec:numerical-results}. \Cref{sec:discussion}
+interprets these results and discusses the limitations of the
+approximation, while \cref{sec:conclusion} summarizes the main conclusions.
+Appendices~\ref{app:derivations-and-checks} and~\ref{app:experiment-details}
+provide supporting derivations, numerical checks, and details of the
+experiments.

@@ -225,13 +225,12 @@ convergence rate. Notebook 10 examines the critical region separately.
 
 ## LaTeX report
 
-The two-column paper template lives in `report/`, with title, author, affiliation,
-abstract, and section placeholders. Its mathematical environments, bibliography,
-figures, tables, and cross-references are configured. The introduction and
-graph-model and theoretical sections, including Appendix A, are written; the
-remaining sections contain writing prompts.
-The seven-section structure follows the finite-size research questions and
-includes detailed writing notes. Install a TeX distribution and
+The two-column paper lives in `report/`, with its title, author details, course
+information, and an abstract placeholder. Its mathematical environments, bibliography,
+figures, tables, and cross-references are configured. The introduction is written;
+all later sections and appendices contain only headings and labels, ready to
+be rewritten. The seven-section structure follows the finite-size research
+questions and retains its existing subsections. Install a TeX distribution and
 `latexmk` separately from `uv`, then
 run:
 
